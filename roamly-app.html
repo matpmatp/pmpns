@@ -31,11 +31,12 @@ body {
   overflow: hidden;
 }
 
-/* ── SIDEBAR ── */
+/* ─── SIDEBAR ─── */
 .sidebar {
   width: 228px; flex-shrink: 0;
   background: var(--ink); color: var(--cream);
   display: flex; flex-direction: column;
+  z-index: 10;
 }
 .sidebar-logo {
   font-size: 1.45rem; font-weight: 900; letter-spacing: -0.04em;
@@ -63,6 +64,7 @@ body {
 .nav-item:hover { color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.04); }
 .nav-item.active { color: var(--cream); background: rgba(232,82,26,0.13); border-left-color: var(--accent); }
 .nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-label { flex: 1; }
 .nav-badge {
   margin-left: auto; background: var(--accent); color: white;
   font-size: 0.62rem; font-weight: 900; padding: 0.15rem 0.42rem;
@@ -82,18 +84,18 @@ body {
 .user-name { font-size: 0.88rem; font-weight: 800; color: var(--cream); letter-spacing: -0.01em; }
 .user-city { font-size: 0.72rem; color: rgba(255,255,255,0.38); font-weight: 500; }
 
-/* ── MAIN ── */
+/* ─── MAIN ─── */
 .main { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
 .main::-webkit-scrollbar { width: 5px; }
 .main::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
-/* ── TOPBAR ── */
 .topbar {
   padding: 1.1rem 2rem;
   background: rgba(245,240,232,0.92); backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0; position: sticky; top: 0; z-index: 5;
+  gap: 0.8rem;
 }
 .topbar-title { font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; }
 .topbar-right { display: flex; align-items: center; gap: 0.7rem; }
@@ -102,17 +104,22 @@ body {
   border-radius: 2rem; padding: 0.5rem 1.1rem;
   color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
   font-size: 0.85rem; font-weight: 500; outline: none; width: 200px;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.topbar-search:focus { border-color: var(--border2); }
+.topbar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,82,26,0.1); }
 .topbar-search::placeholder { color: var(--muted); }
 .topbar-btn {
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--card); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s;
+  cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s, background 0.2s;
+  position: relative; flex-shrink: 0;
 }
-.topbar-btn:hover { border-color: var(--border2); }
+.topbar-btn:hover { border-color: var(--border2); background: var(--warm); }
+.notif-dot {
+  width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+  position: absolute; top: 4px; right: 4px; border: 2px solid var(--cream);
+}
 .back-btn {
   font-size: 0.82rem; font-weight: 700; color: var(--muted);
   text-decoration: none; display: flex; align-items: center; gap: 0.3rem;
@@ -122,13 +129,11 @@ body {
 }
 .back-btn:hover { color: var(--ink); border-color: var(--border2); }
 
-/* ── CONTENT ── */
 .content { padding: 2rem; flex: 1; }
 .page { display: none; }
 .page.active { display: block; animation: fadeUp 0.22s ease both; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-/* ── PAGE HEADER ── */
 .page-header { margin-bottom: 2rem; }
 .section-label {
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
@@ -144,12 +149,10 @@ body {
 }
 .page-header p { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
 
-/* ── GRIDS ── */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; }
 .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.2rem; }
 
-/* ── CARD ── */
 .card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 20px; padding: 1.6rem;
@@ -169,8 +172,13 @@ body {
 }
 .see-all:hover { color: var(--accent); border-color: var(--accent); }
 
-/* ── STAT CARDS ── */
-.stat-card { display: flex; flex-direction: column; gap: 0.2rem; }
+.stat-card { display: flex; flex-direction: column; gap: 0.2rem; cursor: pointer; position: relative; }
+.stat-card:hover .stat-edit-hint { opacity: 1; }
+.stat-edit-hint {
+  position: absolute; top: 0.8rem; right: 0.8rem;
+  font-size: 0.65rem; font-weight: 700; color: var(--muted);
+  opacity: 0; transition: opacity 0.2s;
+}
 .stat-icon {
   width: 40px; height: 40px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
@@ -180,21 +188,23 @@ body {
 .stat-lbl { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-top: 0.2rem; }
 .stat-trend { font-size: 0.75rem; font-weight: 700; margin-top: 0.5rem; }
 
-/* ── CHECKLIST ── */
+/* ─── CHECKLIST ─── */
 .checklist-item {
   display: flex; align-items: center; gap: 0.9rem;
   padding: 0.75rem 0; border-bottom: 1px solid var(--border);
-  cursor: pointer;
+  cursor: pointer; transition: background 0.15s; border-radius: 8px;
 }
 .checklist-item:last-child { border-bottom: none; }
+.checklist-item:hover { background: var(--warm); padding-left: 0.4rem; margin-left: -0.4rem; padding-right: 0.4rem; }
 .check-box {
   width: 22px; height: 22px; border-radius: 7px;
   border: 2px solid var(--border2);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.7rem; font-weight: 900; flex-shrink: 0; color: white;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
-.checklist-item.done .check-box { background: var(--accent3); border-color: var(--accent3); }
+.checklist-item:hover .check-box { border-color: var(--accent3); }
+.checklist-item.done .check-box { background: var(--accent3); border-color: var(--accent3); transform: scale(1.1); }
 .checklist-item.done .check-text { text-decoration: line-through; color: var(--muted); }
 .check-text { font-size: 0.88rem; font-weight: 600; flex: 1; }
 .check-tag {
@@ -204,8 +214,9 @@ body {
 .tag-urgent { background: rgba(232,82,26,0.1); color: var(--accent); }
 .tag-today  { background: rgba(45,107,228,0.1); color: var(--accent2); }
 .tag-week   { background: rgba(34,193,147,0.1); color: var(--accent3); }
+.tag-done   { background: rgba(34,193,147,0.15); color: var(--accent3); }
 
-/* ── AI ── */
+/* ─── AI SECTION ─── */
 .ai-section {
   background: var(--ink); color: var(--cream);
   border-radius: 20px; padding: 1.6rem;
@@ -266,19 +277,19 @@ body {
 }
 .ai-send:hover { opacity: 0.85; transform: translateY(-1px); }
 
-/* ── FILTER ── */
+/* ─── FILTERS ─── */
 .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
 .filter-btn {
   background: var(--card); border: 1.5px solid var(--border);
   border-radius: 2rem; padding: 0.4rem 1.05rem;
   font-size: 0.82rem; font-weight: 700; color: var(--muted);
   cursor: pointer; font-family: 'Cabinet Grotesk', sans-serif;
-  transition: all 0.18s;
+  transition: all 0.18s; user-select: none;
 }
 .filter-btn:hover { border-color: var(--border2); color: var(--ink); }
 .filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
 
-/* ── EVENTS LIST ── */
+/* ─── EVENT LIST ─── */
 .event-list { display: flex; flex-direction: column; gap: 0.7rem; }
 .event-item {
   display: flex; gap: 1rem; align-items: center;
@@ -299,18 +310,20 @@ body {
   background: var(--card); border: 1px solid var(--border); white-space: nowrap;
 }
 
-/* ── BUDGET ── */
+/* ─── BUDGET ─── */
 .cost-row {
   display: flex; align-items: center; gap: 0.9rem;
-  padding: 0.65rem 0; border-bottom: 1px solid var(--border);
+  padding: 0.65rem 0.5rem; border-bottom: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; transition: background 0.15s;
 }
 .cost-row:last-child { border: none; }
+.cost-row:hover { background: var(--warm); }
 .cost-cat { font-size: 0.86rem; font-weight: 700; flex: 1; }
 .cost-bar-wrap { width: 110px; height: 5px; background: var(--warm); border-radius: 3px; overflow: hidden; }
-.cost-bar-fill { height: 100%; border-radius: 3px; }
+.cost-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 .cost-val { font-size: 0.8rem; font-weight: 800; width: 74px; text-align: right; letter-spacing: -0.02em; }
 
-/* ── PLACE CARDS ── */
+/* ─── PLACE CARDS ─── */
 .place-card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 20px; overflow: hidden;
@@ -333,7 +346,7 @@ body {
 .stars { color: var(--accent4); }
 .place-desc { font-size: 0.77rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.55; font-weight: 500; }
 
-/* ── TRANSPORT ── */
+/* ─── ROUTE CARDS ─── */
 .route-card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 18px; padding: 1.2rem 1.4rem;
@@ -352,7 +365,7 @@ body {
 .route-time { font-size: 1.1rem; font-weight: 900; color: var(--accent2); letter-spacing: -0.03em; }
 .route-price { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; text-align: right; font-weight: 600; }
 
-/* ── DOCS ── */
+/* ─── DOCS ─── */
 .doc-item {
   display: flex; align-items: center; gap: 1rem;
   padding: 1rem 1.1rem; background: var(--card);
@@ -361,57 +374,66 @@ body {
 }
 .doc-item:hover { border-color: var(--border2); box-shadow: 0 4px 14px rgba(15,14,12,0.05); }
 .doc-icon {
-  width: 44px; height: 44px; border-radius: 13px;
+  width: 42px; height: 42px; border-radius: 12px;
   background: var(--warm); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
 }
 .doc-info { flex: 1; }
-.doc-name { font-size: 0.9rem; font-weight: 800; letter-spacing: -0.02em; }
-.doc-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.12rem; font-weight: 500; }
+.doc-name { font-size: 0.9rem; font-weight: 800; letter-spacing: -0.01em; }
+.doc-sub { font-size: 0.74rem; color: var(--muted); font-weight: 500; margin-top: 0.1rem; }
 .doc-status {
-  font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.72rem; border-radius: 2rem; flex-shrink: 0;
+  font-size: 0.68rem; font-weight: 800;
+  padding: 0.22rem 0.62rem; border-radius: 2rem; white-space: nowrap;
 }
-.status-done    { background: rgba(34,193,147,0.1);  color: var(--accent3); }
-.status-pending { background: rgba(232,82,26,0.1);   color: var(--accent); }
-.status-review  { background: rgba(212,150,42,0.1);  color: var(--accent4); }
+.status-pending { background: rgba(232,82,26,0.1); color: var(--accent); }
+.status-done    { background: rgba(34,193,147,0.1); color: var(--accent3); }
+.status-review  { background: rgba(212,150,42,0.1); color: var(--accent4); }
 
-/* ── UPLOAD ── */
+/* ─── UPLOAD AREA ─── */
 .upload-area {
-  border: 2px dashed var(--border2); border-radius: 18px;
-  padding: 2.5rem; text-align: center; cursor: pointer;
-  background: var(--warm); transition: border-color 0.2s, background 0.2s;
-  margin-top: 0.5rem;
+  border: 2px dashed var(--border2); border-radius: 16px;
+  padding: 2rem; text-align: center; cursor: pointer;
+  margin-bottom: 1.3rem;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative; overflow: hidden;
 }
-.upload-area:hover { border-color: var(--accent); background: rgba(232,82,26,0.03); }
-.upload-icon { font-size: 2.4rem; margin-bottom: 0.7rem; }
-.upload-text { font-size: 0.92rem; font-weight: 800; margin-bottom: 0.3rem; }
-.upload-sub { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+.upload-area:hover { border-color: var(--accent); background: rgba(232,82,26,0.02); }
+.upload-area.drag-over { border-color: var(--accent3); background: rgba(34,193,147,0.04); }
+.upload-area input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.upload-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+.upload-text { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+.upload-sub { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+.upload-filename {
+  margin-top: 0.8rem; font-size: 0.82rem; font-weight: 700;
+  color: var(--accent3); display: none;
+}
+.upload-filename.show { display: block; }
 
-/* ── TRANSLATION ── */
 .translation-result {
-  display: none; margin-top: 1rem; padding: 1.2rem;
-  background: var(--warm); border: 1px solid var(--border);
-  border-radius: 16px; animation: fadeUp 0.3s ease;
+  display: none; padding: 1.3rem; background: var(--warm);
+  border: 1px solid var(--border); border-radius: 16px;
+  animation: fadeUp 0.3s ease;
 }
 .translation-result.show { display: block; }
-.translation-original { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.6rem; font-style: italic; }
-.translation-text { font-size: 0.87rem; line-height: 1.7; font-weight: 500; }
+.translation-original { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-bottom: 0.8rem; font-style: italic; }
+.translation-text { font-size: 0.86rem; line-height: 1.65; font-weight: 500; margin-bottom: 0.8rem; }
 .translation-warning {
-  display: flex; align-items: flex-start; gap: 0.4rem;
   font-size: 0.76rem; color: var(--accent4); font-weight: 600; line-height: 1.5;
   margin-top: 0.8rem; padding: 0.6rem 0.8rem;
   background: rgba(212,150,42,0.08); border-radius: 10px;
   border: 1px solid rgba(212,150,42,0.15);
 }
 
-/* ── EVENT CARDS ── */
+/* ─── EVENT CARDS ─── */
 .event-card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 20px; overflow: hidden;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 .event-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 8px 26px rgba(15,14,12,0.08); }
-.event-header { padding: 1.3rem; }
+.event-header { padding: 1.3rem; cursor: pointer; }
 .event-emoji { font-size: 2.2rem; line-height: 1; margin-bottom: 0.6rem; display: block; }
 .event-card-title { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
 .event-card-meta { font-size: 0.76rem; color: var(--muted); font-weight: 600; line-height: 1.6; }
@@ -425,6 +447,7 @@ body {
 .badge-culture { background: rgba(155,114,240,0.1); color: var(--accent5); }
 .badge-social  { background: rgba(45,107,228,0.1);  color: var(--accent2); }
 .badge-esn     { background: rgba(232,82,26,0.1);   color: var(--accent); }
+.badge-outdoors { background: rgba(34,193,147,0.12); color: #1a9e7a; }
 .join-btn {
   font-size: 0.78rem; font-weight: 800; padding: 0.33rem 0.9rem;
   border-radius: 2rem; background: var(--ink); border: none; color: var(--cream);
@@ -435,7 +458,7 @@ body {
 .join-btn.joined { background: transparent; color: var(--accent3); border: 1.5px solid rgba(34,193,147,0.35); }
 .join-btn.joined:hover { background: rgba(34,193,147,0.1); }
 
-/* ── CALENDAR ── */
+/* ─── CALENDAR ─── */
 .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
 .cal-day-label {
   font-size: 0.62rem; font-weight: 800; color: var(--muted);
@@ -449,14 +472,24 @@ body {
 }
 .cal-day:hover { background: var(--warm); }
 .cal-day.today { background: var(--accent); color: white; font-weight: 900; }
+.cal-day.today:hover { background: #d4481a; }
+.cal-day.selected { background: rgba(232,82,26,0.15); border: 1.5px solid var(--accent); }
 .cal-day.has-event::after {
   content: ''; width: 4px; height: 4px; border-radius: 50%;
   background: var(--accent3); position: absolute; bottom: 3px;
 }
 .cal-day.today.has-event::after { background: rgba(255,255,255,0.65); }
-.cal-day.other-month { color: var(--muted); opacity: 0.38; }
+.cal-day.other-month { color: var(--muted); opacity: 0.38; pointer-events: none; }
+.cal-nav-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.85rem; font-weight: 800; color: var(--ink);
+  transition: border-color 0.2s, background 0.2s;
+}
+.cal-nav-btn:hover { border-color: var(--border2); background: var(--warm); }
 
-/* ── UTIL ── */
+/* ─── MISC COMPONENTS ─── */
 .inline-input {
   background: var(--warm); border: 1.5px solid var(--border);
   border-radius: 2rem; padding: 0.6rem 1.1rem;
@@ -474,6 +507,13 @@ body {
   transition: background 0.2s, transform 0.15s;
 }
 .btn-dark:hover { background: var(--accent); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent; border: 1.5px solid var(--border2); border-radius: 2rem;
+  padding: 0.6rem 1.3rem; color: var(--ink);
+  font-family: 'Cabinet Grotesk', sans-serif; font-weight: 700; font-size: 0.88rem;
+  cursor: pointer; transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: var(--ink); }
 .tip-box {
   padding: 0.8rem 1rem; background: var(--warm);
   border-radius: 14px; border: 1px solid var(--border);
@@ -503,48 +543,521 @@ body {
   animation: fadeUp 0.3s ease;
 }
 .food-ai-resp.show { display: block; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align: center; padding: 3rem 1rem; color: var(--muted);
+  display: none;
+}
+.empty-state.show { display: block; }
+.empty-state .emoji { font-size: 2.5rem; margin-bottom: 0.8rem; }
+.empty-state .msg { font-size: 0.9rem; font-weight: 600; }
+
+/* ─── MODALS ─── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(15,14,12,0.55);
+  backdrop-filter: blur(4px); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+/* LOGIN MODAL */
+.login-modal {
+  background: var(--cream); border-radius: 28px;
+  width: 420px; max-width: calc(100vw - 2rem);
+  padding: 2.5rem; box-shadow: 0 32px 80px rgba(15,14,12,0.25);
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  position: relative;
+}
+@keyframes popIn { from { opacity: 0; transform: scale(0.88) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.login-logo {
+  font-size: 1.8rem; font-weight: 900; letter-spacing: -0.04em;
+  display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;
+}
+.login-sub { font-size: 0.92rem; color: var(--muted); font-weight: 500; margin-bottom: 2rem; }
+.login-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem;
+}
+.login-input {
+  width: 100%; background: var(--warm); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 0.85rem 1.1rem;
+  color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.92rem; font-weight: 600; outline: none; margin-bottom: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.login-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,82,26,0.1); }
+.login-input::placeholder { color: var(--muted); font-weight: 500; }
+.login-btn {
+  width: 100%; background: var(--ink); border: none; border-radius: 2rem;
+  padding: 0.9rem; color: var(--cream);
+  font-family: 'Cabinet Grotesk', sans-serif; font-weight: 900; font-size: 1rem;
+  cursor: pointer; transition: background 0.2s, transform 0.15s;
+  margin-top: 0.5rem;
+}
+.login-btn:hover { background: var(--accent); transform: translateY(-1px); }
+.login-demo-hint {
+  text-align: center; font-size: 0.78rem; color: var(--muted); font-weight: 500;
+  margin-top: 1rem; padding: 0.7rem; background: var(--warm);
+  border-radius: 12px; border: 1px solid var(--border);
+}
+.login-error {
+  font-size: 0.8rem; color: var(--accent); font-weight: 700;
+  margin-bottom: 0.8rem; padding: 0.5rem 0.8rem;
+  background: rgba(232,82,26,0.06); border-radius: 10px;
+  display: none;
+}
+.login-error.show { display: block; }
+.login-tabs {
+  display: flex; gap: 0.4rem; margin-bottom: 1.8rem;
+  background: var(--warm); border-radius: 14px; padding: 0.3rem;
+  border: 1px solid var(--border);
+}
+.login-tab {
+  flex: 1; padding: 0.55rem; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  text-align: center; transition: background 0.2s, color 0.2s;
+  color: var(--muted);
+}
+.login-tab.active { background: var(--cream); color: var(--ink); box-shadow: 0 2px 8px rgba(15,14,12,0.08); }
+
+/* NOTIFICATIONS PANEL */
+.notif-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 360px;
+  background: var(--cream); z-index: 200;
+  box-shadow: -8px 0 32px rgba(15,14,12,0.12);
+  transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+  max-width: 100vw;
+}
+.notif-panel.open { transform: translateX(0); }
+.notif-header {
+  padding: 1.4rem 1.6rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.notif-header h2 { font-size: 1.1rem; font-weight: 900; letter-spacing: -0.02em; }
+.notif-close {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.85rem; transition: border-color 0.2s;
+  background: var(--card);
+}
+.notif-close:hover { border-color: var(--border2); }
+.notif-list { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.notif-item {
+  padding: 1rem 1.1rem; background: var(--card);
+  border: 1px solid var(--border); border-radius: 16px;
+  cursor: pointer; transition: border-color 0.2s;
+  display: flex; gap: 0.9rem; align-items: flex-start;
+}
+.notif-item:hover { border-color: var(--border2); }
+.notif-item.unread { border-left: 3px solid var(--accent); }
+.notif-icon { font-size: 1.4rem; flex-shrink: 0; }
+.notif-body { flex: 1; }
+.notif-title { font-size: 0.86rem; font-weight: 800; margin-bottom: 0.2rem; }
+.notif-desc { font-size: 0.77rem; color: var(--muted); font-weight: 500; line-height: 1.5; }
+.notif-time { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-top: 0.3rem; }
+.notif-empty { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem; font-weight: 600; }
+
+/* SETTINGS MODAL */
+.settings-modal {
+  background: var(--cream); border-radius: 28px;
+  width: 480px; max-width: calc(100vw - 2rem);
+  max-height: 85vh; overflow-y: auto;
+  padding: 2.2rem; box-shadow: 0 32px 80px rgba(15,14,12,0.25);
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.settings-section {
+  margin-bottom: 1.8rem; padding-bottom: 1.8rem;
+  border-bottom: 1px solid var(--border);
+}
+.settings-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.settings-section-title {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.7rem 0; gap: 1rem;
+}
+.settings-row-label { font-size: 0.9rem; font-weight: 700; }
+.settings-row-sub { font-size: 0.77rem; color: var(--muted); font-weight: 500; margin-top: 0.15rem; }
+.toggle-switch {
+  width: 48px; height: 26px; border-radius: 13px;
+  background: var(--border2); cursor: pointer; position: relative;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--accent3); }
+.toggle-switch::after {
+  content: ''; width: 20px; height: 20px; border-radius: 50%;
+  background: white; position: absolute; top: 3px; left: 3px;
+  transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on::after { transform: translateX(22px); }
+.lang-pills { display: flex; gap: 0.4rem; }
+.lang-pill {
+  padding: 0.35rem 0.9rem; border-radius: 2rem;
+  font-size: 0.82rem; font-weight: 800; cursor: pointer;
+  border: 1.5px solid var(--border); background: var(--card);
+  transition: all 0.18s;
+}
+.lang-pill.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.settings-input {
+  background: var(--warm); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 0.6rem 0.9rem;
+  color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.88rem; font-weight: 600; outline: none; width: 120px;
+  transition: border-color 0.2s;
+}
+.settings-input:focus { border-color: var(--border2); }
+
+/* BUDGET EDIT MODAL */
+.budget-modal {
+  background: var(--cream); border-radius: 28px;
+  width: 440px; max-width: calc(100vw - 2rem);
+  padding: 2.2rem; box-shadow: 0 32px 80px rgba(15,14,12,0.25);
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.budget-edit-row {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+}
+.budget-edit-row:last-child { border-bottom: none; }
+.budget-edit-label { font-size: 0.9rem; font-weight: 700; flex: 1; }
+.budget-edit-input {
+  width: 80px; background: var(--warm); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 0.45rem 0.7rem;
+  color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.88rem; font-weight: 800; outline: none;
+  transition: border-color 0.2s; text-align: right;
+}
+.budget-edit-input:focus { border-color: var(--accent); }
+
+/* CALENDAR DAY POPUP */
+.cal-popup {
+  position: absolute; z-index: 50; background: var(--cream);
+  border: 1px solid var(--border2); border-radius: 18px;
+  padding: 1.1rem 1.3rem; width: 240px;
+  box-shadow: 0 12px 36px rgba(15,14,12,0.14);
+  animation: fadeUp 0.2s ease both;
+}
+.cal-popup-title { font-size: 0.78rem; font-weight: 900; margin-bottom: 0.7rem; color: var(--accent); letter-spacing: -0.01em; }
+.cal-popup-item { font-size: 0.8rem; font-weight: 600; padding: 0.4rem 0; border-bottom: 1px solid var(--border); display: flex; gap: 0.4rem; align-items: center; }
+.cal-popup-item:last-child { border-bottom: none; }
+.cal-popup-none { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--ink); color: var(--cream);
+  padding: 0.8rem 1.6rem; border-radius: 2rem;
+  font-size: 0.88rem; font-weight: 700;
+  box-shadow: 0 8px 28px rgba(15,14,12,0.25);
+  z-index: 9999; transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex; align-items: center; gap: 0.5rem;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* BACKDROP for notif panel */
+.panel-backdrop {
+  position: fixed; inset: 0; z-index: 190;
+  background: rgba(15,14,12,0.3); backdrop-filter: blur(2px);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.panel-backdrop.open { opacity: 1; pointer-events: all; }
+
+/* ─── MOBILE ─── */
+.mobile-nav { display: none; }
+
+@media (max-width: 900px) {
+  body { flex-direction: column; overflow: hidden; height: 100vh; }
+  .sidebar { display: none; }
+  .mobile-nav {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    background: var(--ink); padding: 0.5rem 1rem;
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    gap: 0.2rem; border-top: 1px solid rgba(255,255,255,0.07);
+    justify-content: space-around;
+  }
+  .mob-nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    padding: 0.5rem 0.6rem; cursor: pointer; border-radius: 12px;
+    color: rgba(255,255,255,0.42); transition: color 0.15s, background 0.15s;
+    min-width: 44px; flex: 1;
+  }
+  .mob-nav-item.active { color: var(--cream); background: rgba(232,82,26,0.2); }
+  .mob-nav-icon { font-size: 1.25rem; line-height: 1; }
+  .mob-nav-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  .main { overflow-y: auto; overflow-x: hidden; padding-bottom: 80px; }
+  .topbar { flex-wrap: nowrap; gap: 0.5rem; padding: 0.8rem 1rem; }
+  .topbar-search { width: 120px; font-size: 0.8rem; }
+  .topbar-right { gap: 0.4rem; }
+  .content { padding: 1rem; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .page-header h1 { font-size: 1.7rem; }
+  .notif-panel { width: 100%; }
+  .settings-modal, .login-modal, .budget-modal { max-width: calc(100vw - 1rem); }
+}
 </style>
 </head>
 <body>
 
-<!-- ── SIDEBAR ── -->
+<!-- ═══ LOGIN OVERLAY ═══ -->
+<div class="overlay open" id="login-overlay">
+  <div class="login-modal">
+    <div class="login-logo"><span class="logo-dot"></span>Roamly</div>
+    <div class="login-sub" data-i18n="login_subtitle">Your Erasmus companion</div>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchAuthTab('login',this)" data-i18n="login_tab">Sign in</div>
+      <div class="login-tab" onclick="switchAuthTab('register',this)" data-i18n="register_tab">Register</div>
+    </div>
+    <div id="login-error" class="login-error"></div>
+    <div>
+      <div class="login-label" data-i18n="email_label">Email</div>
+      <input class="login-input" id="login-email" type="email" placeholder="alex@university.eu" />
+    </div>
+    <div>
+      <div class="login-label" data-i18n="password_label">Password</div>
+      <input class="login-input" id="login-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div id="register-fields" style="display:none">
+      <div class="login-label">Name</div>
+      <input class="login-input" id="reg-name" type="text" placeholder="Alex Kowalski" />
+      <div class="login-label">University</div>
+      <input class="login-input" id="reg-uni" type="text" placeholder="STU Bratislava" />
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()" data-i18n="login_btn">Sign in</button>
+    <div class="login-demo-hint" data-i18n="demo_hint">🎓 Demo: use any email + any password to continue</div>
+  </div>
+</div>
+
+<!-- ═══ NOTIFICATIONS PANEL ═══ -->
+<div class="panel-backdrop" id="notif-backdrop" onclick="closeNotif()"></div>
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <h2 data-i18n="notifications_title">Notifications</h2>
+    <div class="notif-close" onclick="closeNotif()">✕</div>
+  </div>
+  <div class="notif-list">
+    <div class="notif-item unread" onclick="markRead(this)">
+      <div class="notif-icon">🔴</div>
+      <div class="notif-body">
+        <div class="notif-title">Dorm registration due today!</div>
+        <div class="notif-desc">Submit your form to Office 104 before 17:00. Don't forget a printed copy.</div>
+        <div class="notif-time">Today · 08:00</div>
+      </div>
+    </div>
+    <div class="notif-item unread" onclick="markRead(this)">
+      <div class="notif-icon">✦</div>
+      <div class="notif-body">
+        <div class="notif-title">AI translated your document</div>
+        <div class="notif-desc">Your dormitory lease form has been translated. 3 fields need attention.</div>
+        <div class="notif-time">Yesterday · 14:32</div>
+      </div>
+    </div>
+    <div class="notif-item" onclick="markRead(this)">
+      <div class="notif-icon">🎉</div>
+      <div class="notif-body">
+        <div class="notif-title">New event this weekend</div>
+        <div class="notif-desc">ESN Walking Tour — Sat 14 Mar, 10:00 AM at SNP Square. Free entry!</div>
+        <div class="notif-time">Yesterday · 10:15</div>
+      </div>
+    </div>
+    <div class="notif-item" onclick="markRead(this)">
+      <div class="notif-icon">📅</div>
+      <div class="notif-body">
+        <div class="notif-title">Orientation Day reminder</div>
+        <div class="notif-desc">Orientation starts March 15 at 09:00 in Room A1. Bring your student ID.</div>
+        <div class="notif-time">2 days ago</div>
+      </div>
+    </div>
+    <div class="notif-item" onclick="markRead(this)">
+      <div class="notif-icon">💶</div>
+      <div class="notif-body">
+        <div class="notif-title">Budget alert</div>
+        <div class="notif-desc">You've spent 65% of your food budget for this month. Stay on track!</div>
+        <div class="notif-time">3 days ago</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS MODAL ═══ -->
+<div class="overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
+  <div class="settings-modal" onclick="event.stopPropagation()">
+    <div class="section-hdr" style="margin-bottom:1.6rem">
+      <h2 style="font-size:1.3rem" data-i18n="settings">Settings</h2>
+      <div class="notif-close" onclick="closeSettings()">✕</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="profile_section">Profile</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" id="settings-name-display">Alex Kowalski</div>
+          <div class="settings-row-sub" id="settings-email-display">alex@student.eu</div>
+        </div>
+        <div class="user-avatar" style="background:linear-gradient(135deg,var(--accent),#ff8c5a);width:44px;height:44px;font-size:0.9rem" id="settings-avatar">AL</div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" data-i18n="city_label">City</div>
+          <div class="settings-row-sub">Your host city</div>
+        </div>
+        <input class="settings-input" id="settings-city" value="Bratislava" />
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="language_section">Language</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" data-i18n="language">Interface language</div>
+          <div class="settings-row-sub">Changes UI labels</div>
+        </div>
+        <div class="lang-pills">
+          <div class="lang-pill active" onclick="setLang('en',this)">EN</div>
+          <div class="lang-pill" onclick="setLang('pl',this)">PL</div>
+          <div class="lang-pill" onclick="setLang('sk',this)">SK</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="notifications_section">Notifications</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" data-i18n="push_notif">Push notifications</div>
+          <div class="settings-row-sub">Deadlines, events, AI alerts</div>
+        </div>
+        <div class="toggle-switch on" id="toggle-notif" onclick="toggleSetting(this)"></div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" data-i18n="deadline_reminders">Deadline reminders</div>
+          <div class="settings-row-sub">24h before due date</div>
+        </div>
+        <div class="toggle-switch on" id="toggle-deadlines" onclick="toggleSetting(this)"></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="appearance_section">Appearance</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" data-i18n="currency">Currency</div>
+          <div class="settings-row-sub">Shown throughout the app</div>
+        </div>
+        <select class="settings-input" id="settings-currency" style="cursor:pointer">
+          <option value="EUR">€ EUR</option>
+          <option value="USD">$ USD</option>
+          <option value="PLN">zł PLN</option>
+          <option value="CZK">Kč CZK</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.7rem;margin-top:0.5rem">
+      <button class="btn-dark" style="flex:1;justify-content:center" onclick="saveSettings()">Save Settings</button>
+      <button class="btn-outline" onclick="doLogout()" style="color:var(--accent);border-color:rgba(232,82,26,0.3)" data-i18n="logout">Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BUDGET EDIT MODAL ═══ -->
+<div class="overlay" id="budget-overlay" onclick="closeBudgetOutside(event)">
+  <div class="budget-modal" onclick="event.stopPropagation()">
+    <div class="section-hdr" style="margin-bottom:1.6rem">
+      <h2 style="font-size:1.3rem">Edit Monthly Budget</h2>
+      <div class="notif-close" onclick="closeBudget()">✕</div>
+    </div>
+    <div style="font-size:0.8rem;color:var(--muted);font-weight:600;margin-bottom:1rem">Enter amounts in your selected currency</div>
+    <div id="budget-edit-rows"></div>
+    <div class="budget-edit-row" style="margin-top:1rem;border-top:2px solid var(--border2);padding-top:1rem">
+      <div class="budget-edit-label" style="font-size:1rem">💰 Total Budget</div>
+      <div style="display:flex;align-items:center;gap:0.4rem">
+        <span style="font-weight:700;color:var(--muted)">€</span>
+        <input class="budget-edit-input" id="budget-total-input" type="number" value="350" style="width:90px;font-size:1rem"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.7rem;margin-top:1.5rem">
+      <button class="btn-dark" style="flex:1;justify-content:center" onclick="saveBudget()">Save Budget</button>
+      <button class="btn-outline" onclick="closeBudget()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast">✓ Done</div>
+
+<!-- ═══ APP LAYOUT ═══ -->
 <aside class="sidebar">
-  <a href="erasmus-app.html" class="sidebar-logo"><span class="logo-dot"></span>Roamly</a>
+  <a href="index.html" class="sidebar-logo"><span class="logo-dot"></span>Roamly</a>
 
-  <span class="sidebar-section-label">Main</span>
-  <div class="nav-item active" onclick="navigate('dashboard',this)"><span class="nav-icon">⊞</span> Dashboard</div>
-  <div class="nav-item" onclick="navigate('assistant',this)"><span class="nav-icon">✦</span> AI Assistant <span class="nav-badge">1</span></div>
+  <span class="sidebar-section-label" data-i18n="nav_main">Main</span>
+  <div class="nav-item active" onclick="navigate('dashboard',this)">
+    <span class="nav-icon">⊞</span>
+    <span class="nav-label" data-i18n="dashboard">Dashboard</span>
+  </div>
+  <div class="nav-item" onclick="navigate('assistant',this)">
+    <span class="nav-icon">✦</span>
+    <span class="nav-label" data-i18n="assistant">AI Assistant</span>
+    <span class="nav-badge">1</span>
+  </div>
 
-  <span class="sidebar-section-label">Tools</span>
-  <div class="nav-item" onclick="navigate('paperwork',this)"><span class="nav-icon">📄</span> Paperwork <span class="nav-badge">3</span></div>
-  <div class="nav-item" onclick="navigate('food',this)"><span class="nav-icon">🍽️</span> Food & Places</div>
-  <div class="nav-item" onclick="navigate('events',this)"><span class="nav-icon">🎉</span> Events</div>
-  <div class="nav-item" onclick="navigate('transport',this)"><span class="nav-icon">🚌</span> Transport</div>
-  <div class="nav-item" onclick="navigate('calendar',this)"><span class="nav-icon">📅</span> Calendar</div>
+  <span class="sidebar-section-label" data-i18n="nav_tools">Tools</span>
+  <div class="nav-item" onclick="navigate('paperwork',this)">
+    <span class="nav-icon">📄</span>
+    <span class="nav-label" data-i18n="paperwork">Paperwork</span>
+    <span class="nav-badge">3</span>
+  </div>
+  <div class="nav-item" onclick="navigate('food',this)">
+    <span class="nav-icon">🍽️</span>
+    <span class="nav-label" data-i18n="food">Food & Places</span>
+  </div>
+  <div class="nav-item" onclick="navigate('events',this)">
+    <span class="nav-icon">🎉</span>
+    <span class="nav-label" data-i18n="events">Events</span>
+  </div>
+  <div class="nav-item" onclick="navigate('transport',this)">
+    <span class="nav-icon">🚌</span>
+    <span class="nav-label" data-i18n="transport">Transport</span>
+  </div>
+  <div class="nav-item" onclick="navigate('calendar',this)">
+    <span class="nav-icon">📅</span>
+    <span class="nav-label" data-i18n="calendar">Calendar</span>
+  </div>
 
   <div class="sidebar-footer">
     <div class="user-card">
-      <div class="user-avatar">AL</div>
-      <div><div class="user-name">Alex</div><div class="user-city">📍 Bratislava</div></div>
+      <div class="user-avatar" id="sidebar-avatar">AL</div>
+      <div>
+        <div class="user-name" id="sidebar-name">Alex</div>
+        <div class="user-city">📍 <span id="sidebar-city">Bratislava</span></div>
+      </div>
     </div>
   </div>
 </aside>
 
-<!-- ── MAIN ── -->
 <main class="main">
   <div class="topbar">
     <div class="topbar-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
-      <a href="erasmus-app.html" class="back-btn">← Home</a>
-      <input class="topbar-search" placeholder="🔍 Search anything..." />
-      <div class="topbar-btn">🔔</div>
-      <div class="topbar-btn">⚙</div>
+      <a href="index.html" class="back-btn">← Home</a>
+      <input class="topbar-search" id="topbar-search" placeholder="🔍 Search anything..." oninput="doSearch(this.value)" />
+      <div class="topbar-btn" id="notif-btn" onclick="openNotif()" title="Notifications">
+        🔔
+        <div class="notif-dot" id="notif-dot"></div>
+      </div>
+      <div class="topbar-btn" onclick="openSettings()" title="Settings">⚙</div>
     </div>
   </div>
 
   <div class="content">
 
-    <!-- ══ DASHBOARD ══ -->
+    <!-- ─── DASHBOARD ─── -->
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div class="section-label">Day 3 · Bratislava</div>
@@ -553,28 +1066,32 @@ body {
       </div>
 
       <div class="grid-4" style="margin-bottom:1.3rem">
-        <div class="card stat-card">
+        <div class="card stat-card" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[2])">
+          <span class="stat-edit-hint">click →</span>
           <div class="stat-icon" style="background:rgba(232,82,26,0.1)">📋</div>
-          <div class="stat-val" style="color:var(--accent)">3</div>
-          <div class="stat-lbl">Tasks today</div>
+          <div class="stat-val" style="color:var(--accent)" id="dash-tasks">3</div>
+          <div class="stat-lbl" data-i18n="tasks_today">Tasks today</div>
           <div class="stat-trend" style="color:var(--accent)">⚠ 2 urgent</div>
         </div>
-        <div class="card stat-card">
+        <div class="card stat-card" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[2])">
+          <span class="stat-edit-hint">click →</span>
           <div class="stat-icon" style="background:rgba(212,150,42,0.1)">📄</div>
-          <div class="stat-val" style="color:var(--accent4)">4</div>
-          <div class="stat-lbl">Docs pending</div>
+          <div class="stat-val" style="color:var(--accent4)" id="dash-docs">4</div>
+          <div class="stat-lbl" data-i18n="docs_pending">Docs pending</div>
           <div class="stat-trend" style="color:var(--accent4)">↑ due this week</div>
         </div>
-        <div class="card stat-card">
+        <div class="card stat-card" onclick="openBudget()" title="Click to edit budget">
+          <span class="stat-edit-hint">✏ edit</span>
           <div class="stat-icon" style="background:rgba(34,193,147,0.1)">💶</div>
-          <div class="stat-val" style="color:var(--accent3)">€124</div>
-          <div class="stat-lbl">Budget left</div>
+          <div class="stat-val" style="color:var(--accent3)" id="dash-budget">€124</div>
+          <div class="stat-lbl" data-i18n="budget_left">Budget left</div>
           <div class="stat-trend" style="color:var(--accent3)">✓ on track</div>
         </div>
-        <div class="card stat-card">
+        <div class="card stat-card" onclick="navigate('events',document.querySelectorAll('.nav-item')[4])">
+          <span class="stat-edit-hint">click →</span>
           <div class="stat-icon" style="background:rgba(45,107,228,0.1)">🎉</div>
           <div class="stat-val" style="color:var(--accent2)">7</div>
-          <div class="stat-lbl">Events nearby</div>
+          <div class="stat-lbl" data-i18n="events_nearby">Events nearby</div>
           <div class="stat-trend" style="color:var(--accent2)">↗ this weekend</div>
         </div>
       </div>
@@ -582,11 +1099,11 @@ body {
       <div class="grid-2" style="margin-bottom:1.3rem">
         <div class="card">
           <div class="section-hdr">
-            <h2>Day 1–3 Checklist</h2>
-            <span class="see-all" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[3])">View all →</span>
+            <h2 data-i18n="checklist">Day 1–3 Checklist</h2>
+            <span class="see-all" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[2])">View all →</span>
           </div>
-          <div class="checklist-item done" onclick="toggleCheck(this)"><div class="check-box">✓</div><span class="check-text">Get transit card from airport</span><span class="check-tag tag-week">Done</span></div>
-          <div class="checklist-item done" onclick="toggleCheck(this)"><div class="check-box">✓</div><span class="check-text">Check into dormitory</span><span class="check-tag tag-week">Done</span></div>
+          <div class="checklist-item done" onclick="toggleCheck(this)"><div class="check-box">✓</div><span class="check-text">Get transit card from airport</span><span class="check-tag tag-done">Done</span></div>
+          <div class="checklist-item done" onclick="toggleCheck(this)"><div class="check-box">✓</div><span class="check-text">Check into dormitory</span><span class="check-tag tag-done">Done</span></div>
           <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Submit dormitory registration form</span><span class="check-tag tag-urgent">Urgent</span></div>
           <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Activate student ID card</span><span class="check-tag tag-urgent">Urgent</span></div>
           <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Register at international office</span><span class="check-tag tag-today">Today</span></div>
@@ -609,25 +1126,33 @@ body {
           </div>
           <div class="ai-input-row">
             <input class="ai-input" id="ai-input-dash" placeholder="Ask anything about Bratislava..." onkeydown="if(event.key==='Enter')sendAIInput('dash')"/>
-            <button class="ai-send" onclick="sendAIInput('dash')">Send</button>
+            <button class="ai-send" onclick="sendAIInput('dash')" data-i18n="send">Send</button>
           </div>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <div class="section-hdr"><h2>Monthly Budget</h2><span class="see-all">€350 total</span></div>
-          <div class="cost-row"><span class="cost-cat">🍽️ Food</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:65%;background:var(--accent)"></div></div><span class="cost-val">€98 / €150</span></div>
-          <div class="cost-row"><span class="cost-cat">🚌 Transport</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:30%;background:var(--accent2)"></div></div><span class="cost-val">€18 / €60</span></div>
-          <div class="cost-row"><span class="cost-cat">🎉 Social</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:20%;background:var(--accent5)"></div></div><span class="cost-val">€14 / €70</span></div>
-          <div class="cost-row"><span class="cost-cat">🛒 Other</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:80%;background:var(--accent4)"></div></div><span class="cost-val">€56 / €70</span></div>
+          <div class="section-hdr">
+            <h2 data-i18n="budget">Monthly Budget</h2>
+            <span class="see-all" onclick="openBudget()">✏ Edit →</span>
+          </div>
+          <div id="budget-display">
+            <div class="cost-row" onclick="openBudget()"><span class="cost-cat">🍽️ Food</span><div class="cost-bar-wrap"><div class="cost-bar-fill" id="bar-food" style="width:65%;background:var(--accent)"></div></div><span class="cost-val" id="val-food">€98 / €150</span></div>
+            <div class="cost-row" onclick="openBudget()"><span class="cost-cat">🚌 Transport</span><div class="cost-bar-wrap"><div class="cost-bar-fill" id="bar-transport" style="width:30%;background:var(--accent2)"></div></div><span class="cost-val" id="val-transport">€18 / €60</span></div>
+            <div class="cost-row" onclick="openBudget()"><span class="cost-cat">🎉 Social</span><div class="cost-bar-wrap"><div class="cost-bar-fill" id="bar-social" style="width:20%;background:var(--accent5)"></div></div><span class="cost-val" id="val-social">€14 / €70</span></div>
+            <div class="cost-row" onclick="openBudget()"><span class="cost-cat">🛒 Other</span><div class="cost-bar-wrap"><div class="cost-bar-fill" id="bar-other" style="width:80%;background:var(--accent4)"></div></div><span class="cost-val" id="val-other">€56 / €70</span></div>
+          </div>
           <div style="margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
             <span style="font-size:0.82rem;color:var(--muted);font-weight:600">Spent so far</span>
-            <strong style="font-size:0.9rem;font-weight:900;letter-spacing:-0.02em">€186 / €350</strong>
+            <strong style="font-size:0.9rem;font-weight:900;letter-spacing:-0.02em" id="budget-total-display">€186 / €350</strong>
           </div>
         </div>
         <div class="card">
-          <div class="section-hdr"><h2>Upcoming</h2><span class="see-all" onclick="navigate('events',document.querySelectorAll('.nav-item')[5])">See all →</span></div>
+          <div class="section-hdr">
+            <h2 data-i18n="upcoming">Upcoming</h2>
+            <span class="see-all" onclick="navigate('events',document.querySelectorAll('.nav-item')[4])">See all →</span>
+          </div>
           <div class="event-list">
             <div class="event-item deadline">
               <div class="event-date-block"><div class="event-date-num">12</div><div class="event-date-mon">Mar</div></div>
@@ -649,7 +1174,7 @@ body {
       </div>
     </div>
 
-    <!-- ══ AI ASSISTANT ══ -->
+    <!-- ─── AI ASSISTANT ─── -->
     <div class="page" id="page-assistant">
       <div class="page-header">
         <div class="section-label">Powered by AI</div>
@@ -680,8 +1205,8 @@ body {
           <div class="card">
             <div class="card-label">Quick Actions</div>
             <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.4rem">
-              <div class="doc-item" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[3])"><div class="doc-icon">📄</div><div class="doc-info"><div class="doc-name">Upload & Translate Document</div><div class="doc-sub">Upload a Slovak form to translate</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
-              <div class="doc-item" onclick="navigate('food',document.querySelectorAll('.nav-item')[4])"><div class="doc-icon">🍽️</div><div class="doc-info"><div class="doc-name">Find Food Near Me</div><div class="doc-sub">Budget-friendly student restaurants</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
+              <div class="doc-item" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[2])"><div class="doc-icon">📄</div><div class="doc-info"><div class="doc-name">Upload & Translate Document</div><div class="doc-sub">Upload a Slovak form to translate</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
+              <div class="doc-item" onclick="navigate('food',document.querySelectorAll('.nav-item')[3])"><div class="doc-icon">🍽️</div><div class="doc-info"><div class="doc-name">Find Food Near Me</div><div class="doc-sub">Budget-friendly student restaurants</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
               <div class="doc-item" onclick="navigate('transport',document.querySelectorAll('.nav-item')[6])"><div class="doc-icon">🚌</div><div class="doc-info"><div class="doc-name">Plan a Route</div><div class="doc-sub">Directions + student discount info</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
             </div>
           </div>
@@ -699,7 +1224,7 @@ body {
       </div>
     </div>
 
-    <!-- ══ PAPERWORK ══ -->
+    <!-- ─── PAPERWORK ─── -->
     <div class="page" id="page-paperwork">
       <div class="page-header">
         <div class="section-label">Admin & Docs</div>
@@ -709,14 +1234,16 @@ body {
       <div class="grid-2" style="margin-bottom:1.3rem">
         <div class="card">
           <div class="card-label">Upload & Translate</div>
-          <div class="upload-area" onclick="simulateUpload()">
+          <div class="upload-area" id="upload-area">
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFileUpload(this)" id="file-input" />
             <div class="upload-icon">📎</div>
             <div class="upload-text">Drop a document or click to upload</div>
             <div class="upload-sub">PDF, JPG, PNG · Slovak, Czech, Hungarian, German</div>
+            <div class="upload-filename" id="upload-filename"></div>
           </div>
           <div class="translation-result" id="translation-demo">
             <div class="card-label">Translation Result</div>
-            <div class="translation-original">Original: "Nájomná zmluva — Podmienky ubytovacieho zariadenia"</div>
+            <div class="translation-original" id="translation-original">Original: "Nájomná zmluva — Podmienky ubytovacieho zariadenia"</div>
             <div class="translation-text"><strong>Lease Agreement — Terms of Accommodation Facility</strong><br><br>The tenant is obligated to pay a security deposit of <strong>€150</strong> within 3 working days of arrival. The deposit will be returned within 14 days of checkout, provided no damage has occurred. Mandatory fields marked with * must be completed in <em>block capitals</em>. Passport number and date of arrival are required.</div>
             <div class="translation-warning">⚠️ This translation is an AI aid. The original Slovak document remains legally binding. When unsure, contact the dormitory office directly.</div>
           </div>
@@ -725,17 +1252,15 @@ body {
           <div class="section-hdr"><h2>Document Status</h2></div>
           <div style="display:flex;flex-direction:column;gap:0.7rem">
             <div class="doc-item"><div class="doc-icon">🏠</div><div class="doc-info"><div class="doc-name">Dormitory Registration</div><div class="doc-sub">Due: March 12 · Office 104</div></div><span class="doc-status status-pending">Pending</span></div>
-            <div class="doc-item"><div class="doc-icon">🎓</div><div class="doc-info"><div class="doc-name">Learning Agreement</div><div class="doc-sub">Submit to Erasmus coordinator</div></div><span class="doc-status status-review">In Review</span></div>
-            <div class="doc-item"><div class="doc-icon">💳</div><div class="doc-info"><div class="doc-name">Student ID Application</div><div class="doc-sub">International Office · Building A</div></div><span class="doc-status status-pending">Pending</span></div>
-            <div class="doc-item"><div class="doc-icon">🏥</div><div class="doc-info"><div class="doc-name">Health Insurance Declaration</div><div class="doc-sub">EHIC or local equivalent</div></div><span class="doc-status status-pending">Pending</span></div>
-            <div class="doc-item"><div class="doc-icon">📋</div><div class="doc-info"><div class="doc-name">Course Enrollment Form</div><div class="doc-sub">Deadline: March 20</div></div><span class="doc-status status-done">Done</span></div>
-            <div class="doc-item"><div class="doc-icon">✈️</div><div class="doc-info"><div class="doc-name">Arrival Confirmation</div><div class="doc-sub">Sent to home university</div></div><span class="doc-status status-done">Done</span></div>
+            <div class="doc-item"><div class="doc-icon">🎓</div><div class="doc-info"><div class="doc-name">Student ID Activation</div><div class="doc-sub">International Office · Bldg A</div></div><span class="doc-status status-pending">Pending</span></div>
+            <div class="doc-item"><div class="doc-icon">🏦</div><div class="doc-info"><div class="doc-name">Bank Account Setup</div><div class="doc-sub">VUB Bank · Námestie SNP</div></div><span class="doc-status status-review">In Review</span></div>
+            <div class="doc-item"><div class="doc-icon">📋</div><div class="doc-info"><div class="doc-name">University Enrollment Form</div><div class="doc-sub">Submitted March 8</div></div><span class="doc-status status-done">Done ✓</span></div>
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="section-hdr"><h2>Field-by-Field Guide — Dormitory Registration</h2></div>
-        <div class="grid-2">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-label" style="margin-bottom:1rem">STU Dormitory Form Guide</div>
           <div style="display:flex;flex-direction:column;gap:0.5rem">
             <div class="tip-box"><span style="color:var(--accent);font-weight:900">Field 1</span> — Meno a priezvisko = <strong>Full name</strong></div>
             <div class="tip-box"><span style="color:var(--accent);font-weight:900">Field 2</span> — Číslo pasu = <strong>Passport number</strong></div>
@@ -743,8 +1268,10 @@ body {
             <div class="tip-box"><span style="color:var(--accent);font-weight:900">Field 4</span> — Domáca adresa = <strong>Home address (your country)</strong></div>
             <div class="warn-box">⚠ Field 7 — Zábezpeka = <strong>Security deposit (€150, within 3 days)</strong> — Read carefully before signing</div>
           </div>
+        </div>
+        <div class="card">
+          <div class="card-label" style="margin-bottom:1rem">Tips from Erasmus students</div>
           <div style="display:flex;flex-direction:column;gap:0.55rem">
-            <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.1rem">Tips from Erasmus students</div>
             <div class="tip-box" style="border-left:3px solid var(--accent3)">"Bring a printed copy AND a digital version to the office" — Marta, France</div>
             <div class="tip-box" style="border-left:3px solid var(--accent2)">"Office open Mon–Fri 8–12 and 13–16 only. Don't miss it!" — Jonas, Germany</div>
             <div class="tip-box" style="border-left:3px solid var(--accent5)">"They accept deposit in cash only. ATM is in the lobby." — Sara, Italy</div>
@@ -753,29 +1280,81 @@ body {
       </div>
     </div>
 
-    <!-- ══ FOOD ══ -->
+    <!-- ─── FOOD & PLACES ─── -->
     <div class="page" id="page-food">
       <div class="page-header">
         <div class="section-label">Eat & Explore</div>
         <h1>Food & <em>Places</em> 🍽️</h1>
         <p>Rated by Erasmus students — not tourists</p>
       </div>
-      <div class="filter-row">
-        <div class="filter-btn active">All</div>
-        <div class="filter-btn">€ Under €5</div>
-        <div class="filter-btn">€€ Under €10</div>
-        <div class="filter-btn">Near Me</div>
-        <div class="filter-btn">Open Now</div>
-        <div class="filter-btn">Student Discount</div>
-        <div class="filter-btn">Vegetarian</div>
+      <div class="filter-row" id="food-filters">
+        <div class="filter-btn active" data-filter="all">All</div>
+        <div class="filter-btn" data-filter="under5">€ Under €5</div>
+        <div class="filter-btn" data-filter="under10">€€ Under €10</div>
+        <div class="filter-btn" data-filter="nearby">Near Me</div>
+        <div class="filter-btn" data-filter="open">Open Now</div>
+        <div class="filter-btn" data-filter="discount">Student Discount</div>
+        <div class="filter-btn" data-filter="vegetarian">Vegetarian</div>
       </div>
-      <div class="grid-3" style="margin-bottom:1.3rem">
-        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(232,82,26,0.07),rgba(232,82,26,0.02))">🥙</div><div class="place-body"><div class="place-name">Bufet STU</div><div class="place-meta"><span class="place-chip green">€2–4</span><span class="place-chip blue">150m</span><span class="place-chip">Student discount</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.1 · 89 Erasmus reviews</span></div><div class="place-desc">Canteen inside STU campus. Daily menu always includes soup + main for €3.50. Cash only.</div></div></div>
-        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(34,193,147,0.07),rgba(34,193,147,0.02))">🍕</div><div class="place-body"><div class="place-name">Balkán Pizza</div><div class="place-meta"><span class="place-chip green">€3–6</span><span class="place-chip blue">400m</span></div><div class="place-rating"><span class="stars">★★★★★</span><span style="color:var(--muted)">4.7 · 124 Erasmus reviews</span></div><div class="place-desc">Huge slices, super cheap. Local institution. Open till midnight on weekends.</div></div></div>
-        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(45,107,228,0.07),rgba(45,107,228,0.02))">🍜</div><div class="place-body"><div class="place-name">Pho Saigon</div><div class="place-meta"><span class="place-chip green">€4–7</span><span class="place-chip blue">800m</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.4 · 56 Erasmus reviews</span></div><div class="place-desc">Best value in the area. Big portions, very filling. Popular with international students.</div></div></div>
-        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(155,114,240,0.07),rgba(155,114,240,0.02))">☕</div><div class="place-body"><div class="place-name">Caffe Kút</div><div class="place-meta"><span class="place-chip green">€1.5–3</span><span class="place-chip blue">200m</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.2 · 71 Erasmus reviews</span></div><div class="place-desc">Great coffee and wifi. Popular study spot. Quiet atmosphere — perfect for calm evenings.</div></div></div>
-        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(212,150,42,0.07),rgba(212,150,42,0.02))">🥗</div><div class="place-body"><div class="place-name">Fresh Market</div><div class="place-meta"><span class="place-chip green">€2–5</span><span class="place-chip blue">600m</span><span class="place-chip">Vegetarian</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.0 · 38 Erasmus reviews</span></div><div class="place-desc">Fresh salads and bowls. Great for healthy eating on a budget. Closes at 6PM.</div></div></div>
-        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(232,82,26,0.05),rgba(232,82,26,0.01))">🍺</div><div class="place-body"><div class="place-name">Paparazzi Beer Garden</div><div class="place-meta"><span class="place-chip green">€2–8</span><span class="place-chip blue">1.1km</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.3 · 203 Erasmus reviews</span></div><div class="place-desc">ESN meetup hotspot. Huge outdoor terrace. Very social, lots of Erasmus students.</div></div></div>
+      <div class="grid-3" id="food-grid" style="margin-bottom:1.3rem">
+        <div class="place-card" data-tags="under5 under10 nearby discount">
+          <div class="place-thumb" style="background:linear-gradient(135deg,rgba(232,82,26,0.07),rgba(232,82,26,0.02))">🥙</div>
+          <div class="place-body">
+            <div class="place-name">Bufet STU</div>
+            <div class="place-meta"><span class="place-chip green">€2–4</span><span class="place-chip blue">150m</span><span class="place-chip">Student discount</span></div>
+            <div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.1 · 89 Erasmus reviews</span></div>
+            <div class="place-desc">Canteen inside STU campus. Daily menu always includes soup + main for €3.50. Cash only.</div>
+          </div>
+        </div>
+        <div class="place-card" data-tags="under10 nearby">
+          <div class="place-thumb" style="background:linear-gradient(135deg,rgba(34,193,147,0.07),rgba(34,193,147,0.02))">🍕</div>
+          <div class="place-body">
+            <div class="place-name">Balkán Pizza</div>
+            <div class="place-meta"><span class="place-chip green">€3–6</span><span class="place-chip blue">400m</span></div>
+            <div class="place-rating"><span class="stars">★★★★★</span><span style="color:var(--muted)">4.7 · 124 Erasmus reviews</span></div>
+            <div class="place-desc">Huge slices, super cheap. Local institution. Open till midnight on weekends.</div>
+          </div>
+        </div>
+        <div class="place-card" data-tags="under10">
+          <div class="place-thumb" style="background:linear-gradient(135deg,rgba(45,107,228,0.07),rgba(45,107,228,0.02))">🍜</div>
+          <div class="place-body">
+            <div class="place-name">Pho Saigon</div>
+            <div class="place-meta"><span class="place-chip green">€4–7</span><span class="place-chip blue">800m</span></div>
+            <div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.4 · 56 Erasmus reviews</span></div>
+            <div class="place-desc">Best value in the area. Big portions, very filling. Popular with international students.</div>
+          </div>
+        </div>
+        <div class="place-card" data-tags="under5 under10 nearby">
+          <div class="place-thumb" style="background:linear-gradient(135deg,rgba(155,114,240,0.07),rgba(155,114,240,0.02))">☕</div>
+          <div class="place-body">
+            <div class="place-name">Caffe Kút</div>
+            <div class="place-meta"><span class="place-chip green">€1.5–3</span><span class="place-chip blue">200m</span></div>
+            <div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.2 · 71 Erasmus reviews</span></div>
+            <div class="place-desc">Great coffee and wifi. Popular study spot. Quiet atmosphere — perfect for calm evenings.</div>
+          </div>
+        </div>
+        <div class="place-card" data-tags="under10 vegetarian">
+          <div class="place-thumb" style="background:linear-gradient(135deg,rgba(212,150,42,0.07),rgba(212,150,42,0.02))">🥗</div>
+          <div class="place-body">
+            <div class="place-name">Fresh Market</div>
+            <div class="place-meta"><span class="place-chip green">€2–5</span><span class="place-chip blue">600m</span><span class="place-chip">Vegetarian</span></div>
+            <div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.0 · 38 Erasmus reviews</span></div>
+            <div class="place-desc">Fresh salads and bowls. Great for healthy eating on a budget. Closes at 6PM.</div>
+          </div>
+        </div>
+        <div class="place-card" data-tags="under10 discount">
+          <div class="place-thumb" style="background:linear-gradient(135deg,rgba(232,82,26,0.05),rgba(232,82,26,0.01))">🍺</div>
+          <div class="place-body">
+            <div class="place-name">Paparazzi Beer Garden</div>
+            <div class="place-meta"><span class="place-chip green">€2–8</span><span class="place-chip blue">1.1km</span><span class="place-chip">Student discount</span></div>
+            <div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.3 · 203 Erasmus reviews</span></div>
+            <div class="place-desc">ESN meetup hotspot. Huge outdoor terrace. Very social, lots of Erasmus students.</div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" id="food-empty">
+        <div class="emoji">🍽️</div>
+        <div class="msg">No places match this filter.<br><span style="font-size:0.8rem;font-weight:500">Try a different category.</span></div>
       </div>
       <div class="card">
         <div class="card-label">Ask AI for personalised recommendations</div>
@@ -787,32 +1366,66 @@ body {
       </div>
     </div>
 
-    <!-- ══ EVENTS ══ -->
+    <!-- ─── EVENTS ─── -->
     <div class="page" id="page-events">
       <div class="page-header">
         <div class="section-label">Social & Culture</div>
         <h1>Events in <em>Bratislava</em> 🎉</h1>
         <p>Curated for exchange students — calm events included</p>
       </div>
-      <div class="filter-row">
-        <div class="filter-btn active">All Events</div>
-        <div class="filter-btn">ESN Official</div>
-        <div class="filter-btn">Calm / Cultural</div>
-        <div class="filter-btn">Outdoors</div>
-        <div class="filter-btn">Free Entry</div>
-        <div class="filter-btn">This Weekend</div>
+      <div class="filter-row" id="events-filters">
+        <div class="filter-btn active" data-filter="all">All Events</div>
+        <div class="filter-btn" data-filter="esn">ESN Official</div>
+        <div class="filter-btn" data-filter="calm">Calm / Cultural</div>
+        <div class="filter-btn" data-filter="outdoors">Outdoors</div>
+        <div class="filter-btn" data-filter="free">Free Entry</div>
+        <div class="filter-btn" data-filter="weekend">This Weekend</div>
       </div>
-      <div class="grid-3">
-        <div class="event-card"><div class="event-header"><span class="event-emoji">🚶</span><div class="event-card-title">Old Town Walking Tour</div><div class="event-card-meta">📅 Sat 14 Mar · 10:00 AM<br>📍 SNP Square · Free entry</div></div><div class="event-footer"><span class="event-type-badge badge-calm">Calm</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
-        <div class="event-card"><div class="event-header"><span class="event-emoji">🎨</span><div class="event-card-title">Slovak Culture Night</div><div class="event-card-meta">📅 Fri 13 Mar · 19:00<br>📍 Cultural Center · €3</div></div><div class="event-footer"><span class="event-type-badge badge-culture">Cultural</span><button class="join-btn joined" onclick="toggleJoin(this)">✓ Going</button></div></div>
-        <div class="event-card"><div class="event-header"><span class="event-emoji">🏰</span><div class="event-card-title">Bratislava Castle Visit</div><div class="event-card-meta">📅 Sun 15 Mar · 11:00 AM<br>📍 Castle Hill · €5 student</div></div><div class="event-footer"><span class="event-type-badge badge-culture">Cultural</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
-        <div class="event-card"><div class="event-header"><span class="event-emoji">🌍</span><div class="event-card-title">ESN International Dinner</div><div class="event-card-meta">📅 Wed 18 Mar · 18:00<br>📍 STU Main Hall · €5</div></div><div class="event-footer"><span class="event-type-badge badge-esn">ESN</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
-        <div class="event-card"><div class="event-header"><span class="event-emoji">🎲</span><div class="event-card-title">Board Game Night</div><div class="event-card-meta">📅 Thu 19 Mar · 19:00<br>📍 Common Room B2 · Free</div></div><div class="event-footer"><span class="event-type-badge badge-social">Social</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
-        <div class="event-card"><div class="event-header"><span class="event-emoji">🎵</span><div class="event-card-title">Jazz at Žilina Café</div><div class="event-card-meta">📅 Fri 20 Mar · 20:00<br>📍 Staré Mesto · €5</div></div><div class="event-footer"><span class="event-type-badge badge-calm">Calm</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
+      <div class="grid-3" id="events-grid">
+        <div class="event-card" data-tags="calm outdoors free weekend">
+          <div class="event-header"><span class="event-emoji">🚶</span><div class="event-card-title">Old Town Walking Tour</div><div class="event-card-meta">📅 Sat 14 Mar · 10:00 AM<br>📍 SNP Square · Free entry</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-calm">Calm</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="calm">
+          <div class="event-header"><span class="event-emoji">🎨</span><div class="event-card-title">Slovak Culture Night</div><div class="event-card-meta">📅 Fri 13 Mar · 19:00<br>📍 Cultural Center · €3</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-culture">Cultural</span><button class="join-btn joined" onclick="toggleJoin(this)">✓ Going</button></div>
+        </div>
+        <div class="event-card" data-tags="calm weekend">
+          <div class="event-header"><span class="event-emoji">🏰</span><div class="event-card-title">Bratislava Castle Visit</div><div class="event-card-meta">📅 Sun 15 Mar · 11:00 AM<br>📍 Castle Hill · €5 student</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-culture">Cultural</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="esn">
+          <div class="event-header"><span class="event-emoji">🌍</span><div class="event-card-title">ESN International Dinner</div><div class="event-card-meta">📅 Wed 18 Mar · 18:00<br>📍 STU Main Hall · €5</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-esn">ESN</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="free">
+          <div class="event-header"><span class="event-emoji">🎲</span><div class="event-card-title">Board Game Night</div><div class="event-card-meta">📅 Thu 19 Mar · 19:00<br>📍 Common Room B2 · Free</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-social">Social</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="calm">
+          <div class="event-header"><span class="event-emoji">🎵</span><div class="event-card-title">Jazz at Žilina Café</div><div class="event-card-meta">📅 Fri 20 Mar · 20:00<br>📍 Staré Mesto · €5</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-calm">Calm</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="esn outdoors free weekend">
+          <div class="event-header"><span class="event-emoji">🏞️</span><div class="event-card-title">ESN Hike — Devín Castle</div><div class="event-card-meta">📅 Sat 14 Mar · 09:00 AM<br>📍 Devín Ruins · Free for ESN members</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-outdoors">Outdoors</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="outdoors free">
+          <div class="event-header"><span class="event-emoji">🌿</span><div class="event-card-title">Petržalka Park Picnic</div><div class="event-card-meta">📅 Sat 21 Mar · 13:00<br>📍 Sad Janka Kráľa · Free</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-outdoors">Outdoors</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+        <div class="event-card" data-tags="esn calm">
+          <div class="event-header"><span class="event-emoji">🎭</span><div class="event-card-title">ESN Buddy Program</div><div class="event-card-meta">📅 Mon 16 Mar · 17:00<br>📍 STU Campus · Free for all</div></div>
+          <div class="event-footer"><span class="event-type-badge badge-esn">ESN</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div>
+        </div>
+      </div>
+      <div class="empty-state" id="events-empty">
+        <div class="emoji">🎉</div>
+        <div class="msg">No events match this filter.<br><span style="font-size:0.8rem;font-weight:500">Try a different category.</span></div>
       </div>
     </div>
 
-    <!-- ══ TRANSPORT ══ -->
+    <!-- ─── TRANSPORT ─── -->
     <div class="page" id="page-transport">
       <div class="page-header">
         <div class="section-label">Getting Around</div>
@@ -823,8 +1436,8 @@ body {
         <div class="card">
           <div class="card-label" style="margin-bottom:1rem">Plan a Route</div>
           <div style="display:flex;flex-direction:column;gap:0.7rem">
-            <div><div style="font-size:0.7rem;font-weight:700;color:var(--muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.08em">From</div><input class="inline-input" value="Mlynská dolina (Dormitory)"/></div>
-            <div><div style="font-size:0.7rem;font-weight:700;color:var(--muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.08em">To</div><input class="inline-input" value="STU Main Campus"/></div>
+            <div><div style="font-size:0.7rem;font-weight:700;color:var(--muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.08em">From</div><input class="inline-input" id="route-from" value="Mlynská dolina (Dormitory)"/></div>
+            <div><div style="font-size:0.7rem;font-weight:700;color:var(--muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.08em">To</div><input class="inline-input" id="route-to" value="STU Main Campus"/></div>
             <button class="btn-dark" style="width:100%;justify-content:center" onclick="showRoute()">Find Route ✦</button>
           </div>
           <div class="route-result-box" id="route-result">
@@ -855,7 +1468,7 @@ body {
       </div>
     </div>
 
-    <!-- ══ CALENDAR ══ -->
+    <!-- ─── CALENDAR ─── -->
     <div class="page" id="page-calendar">
       <div class="page-header">
         <div class="section-label">Schedule</div>
@@ -863,37 +1476,28 @@ body {
         <p>All deadlines, events, and university dates in one place</p>
       </div>
       <div class="grid-2">
-        <div class="card">
+        <div class="card" style="position:relative">
           <div class="section-hdr">
-            <h2>March 2026</h2>
+            <h2 id="cal-month-title">March 2026</h2>
             <div style="display:flex;gap:0.4rem">
-              <div class="topbar-btn" style="font-size:0.85rem;font-weight:800">‹</div>
-              <div class="topbar-btn" style="font-size:0.85rem;font-weight:800">›</div>
+              <div class="cal-nav-btn" onclick="calNav(-1)">‹</div>
+              <div class="cal-nav-btn" onclick="calNav(1)">›</div>
             </div>
           </div>
-          <div class="cal-grid">
-            <div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div><div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div><div class="cal-day-label">Sun</div>
-            <div class="cal-day other-month">24</div><div class="cal-day other-month">25</div><div class="cal-day other-month">26</div><div class="cal-day other-month">27</div><div class="cal-day other-month">28</div><div class="cal-day">1</div><div class="cal-day">2</div>
-            <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day today">9</div>
-            <div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day has-event">12</div><div class="cal-day">13</div><div class="cal-day has-event">14</div><div class="cal-day has-event">15</div><div class="cal-day">16</div>
-            <div class="cal-day">17</div><div class="cal-day has-event">18</div><div class="cal-day has-event">19</div><div class="cal-day has-event">20</div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div>
-            <div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
-            <div class="cal-day">31</div>
+          <div class="cal-grid" id="cal-grid">
+            <!-- Rendered by JS -->
           </div>
           <div style="display:flex;gap:1rem;margin-top:1rem;font-size:0.75rem;font-weight:700;color:var(--muted)">
             <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span>Today</div>
             <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent3);display:inline-block"></span>Event</div>
           </div>
+          <!-- Day popup container -->
+          <div id="cal-popup-container"></div>
         </div>
         <div class="card">
-          <div class="section-hdr"><h2>Events This Month</h2></div>
-          <div class="event-list">
-            <div class="event-item deadline"><div class="event-date-block"><div class="event-date-num">12</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🔴 Dorm Registration Deadline</div><div class="event-sub">Submit form to Office 104 by 17:00</div></div><div class="event-time" style="color:var(--accent)">17:00</div></div>
-            <div class="event-item"><div class="event-date-block"><div class="event-date-num">14</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🚶 ESN City Walking Tour</div><div class="event-sub">Old Town · SNP Square · Free</div></div><div class="event-time">10:00</div></div>
-            <div class="event-item transport"><div class="event-date-block"><div class="event-date-num">15</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🎓 Orientation Day — STU</div><div class="event-sub">Faculty of Informatics · Room A1</div></div><div class="event-time">09:00</div></div>
-            <div class="event-item"><div class="event-date-block"><div class="event-date-num">18</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🌍 ESN International Dinner</div><div class="event-sub">STU Main Hall · €5</div></div><div class="event-time">18:00</div></div>
-            <div class="event-item"><div class="event-date-block"><div class="event-date-num">19</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🎲 Board Game Night</div><div class="event-sub">Common Room B2 · Free</div></div><div class="event-time">19:00</div></div>
-            <div class="event-item deadline"><div class="event-date-block"><div class="event-date-num">20</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🔴 Course Enrollment Deadline</div><div class="event-sub">Submit to academic office</div></div><div class="event-time" style="color:var(--accent)">23:59</div></div>
+          <div class="section-hdr"><h2 id="cal-events-title">Events This Month</h2></div>
+          <div class="event-list" id="cal-event-list">
+            <!-- Rendered by JS -->
           </div>
         </div>
       </div>
@@ -902,31 +1506,648 @@ body {
   </div>
 </main>
 
+<!-- ═══ MOBILE BOTTOM NAV ═══ -->
+<nav class="mobile-nav">
+  <div class="mob-nav-item active" onclick="navigate('dashboard',this);setMobActive(this)">
+    <div class="mob-nav-icon">⊞</div>
+    <div class="mob-nav-label" data-i18n="dashboard">Home</div>
+  </div>
+  <div class="mob-nav-item" onclick="navigate('assistant',this);setMobActive(this)">
+    <div class="mob-nav-icon">✦</div>
+    <div class="mob-nav-label" data-i18n="assistant">AI</div>
+  </div>
+  <div class="mob-nav-item" onclick="navigate('paperwork',this);setMobActive(this)">
+    <div class="mob-nav-icon">📄</div>
+    <div class="mob-nav-label" data-i18n="paperwork">Docs</div>
+  </div>
+  <div class="mob-nav-item" onclick="navigate('food',this);setMobActive(this)">
+    <div class="mob-nav-icon">🍽️</div>
+    <div class="mob-nav-label" data-i18n="food">Food</div>
+  </div>
+  <div class="mob-nav-item" onclick="navigate('events',this);setMobActive(this)">
+    <div class="mob-nav-icon">🎉</div>
+    <div class="mob-nav-label" data-i18n="events">Events</div>
+  </div>
+  <div class="mob-nav-item" onclick="navigate('transport',this);setMobActive(this)">
+    <div class="mob-nav-icon">🚌</div>
+    <div class="mob-nav-label" data-i18n="transport">Transit</div>
+  </div>
+  <div class="mob-nav-item" onclick="navigate('calendar',this);setMobActive(this)">
+    <div class="mob-nav-icon">📅</div>
+    <div class="mob-nav-label" data-i18n="calendar">Calendar</div>
+  </div>
+</nav>
+
 <script>
-const pageTitles = { dashboard:'Dashboard', assistant:'AI Assistant', paperwork:'Paperwork', food:'Food & Places', events:'Events', transport:'Transport', calendar:'Calendar' };
+/* ═══════════════════════════════════════════
+   TRANSLATIONS
+═══════════════════════════════════════════ */
+const i18n = {
+  en: {
+    dashboard:'Dashboard', assistant:'AI Assistant', paperwork:'Paperwork',
+    food:'Food & Places', events:'Events', transport:'Transport', calendar:'Calendar',
+    settings:'Settings', notifications_title:'Notifications', logout:'Log out',
+    login_subtitle:'Your Erasmus companion', login_tab:'Sign in', register_tab:'Register',
+    email_label:'Email', password_label:'Password', login_btn:'Sign in',
+    demo_hint:'🎓 Demo: use any email + any password to continue',
+    nav_main:'Main', nav_tools:'Tools', tasks_today:'Tasks today',
+    docs_pending:'Docs pending', budget_left:'Budget left', events_nearby:'Events nearby',
+    checklist:'Day 1–3 Checklist', budget:'Monthly Budget', upcoming:'Upcoming',
+    language_section:'Language', language:'Interface language',
+    notifications_section:'Notifications', push_notif:'Push notifications',
+    deadline_reminders:'Deadline reminders', appearance_section:'Appearance',
+    currency:'Currency', profile_section:'Profile', city_label:'City',
+    send:'Send', save:'Save', cancel:'Cancel',
+  },
+  pl: {
+    dashboard:'Panel główny', assistant:'Asystent AI', paperwork:'Dokumenty',
+    food:'Jedzenie i miejsca', events:'Wydarzenia', transport:'Transport', calendar:'Kalendarz',
+    settings:'Ustawienia', notifications_title:'Powiadomienia', logout:'Wyloguj',
+    login_subtitle:'Twój towarzysz Erasmus', login_tab:'Zaloguj się', register_tab:'Zarejestruj',
+    email_label:'Email', password_label:'Hasło', login_btn:'Zaloguj się',
+    demo_hint:'🎓 Demo: użyj dowolnego emaila i hasła',
+    nav_main:'Główne', nav_tools:'Narzędzia', tasks_today:'Zadania dziś',
+    docs_pending:'Dokumenty', budget_left:'Zostało w budżecie', events_nearby:'Pobliskie wydarzenia',
+    checklist:'Lista — Dzień 1–3', budget:'Miesięczny budżet', upcoming:'Nadchodzące',
+    language_section:'Język', language:'Język interfejsu',
+    notifications_section:'Powiadomienia', push_notif:'Powiadomienia push',
+    deadline_reminders:'Przypomnienia o terminach', appearance_section:'Wygląd',
+    currency:'Waluta', profile_section:'Profil', city_label:'Miasto',
+    send:'Wyślij', save:'Zapisz', cancel:'Anuluj',
+  },
+  sk: {
+    dashboard:'Prehľad', assistant:'AI Asistent', paperwork:'Dokumenty',
+    food:'Jedlo a miesta', events:'Udalosti', transport:'Doprava', calendar:'Kalendár',
+    settings:'Nastavenia', notifications_title:'Oznámenia', logout:'Odhlásiť sa',
+    login_subtitle:'Váš spoločník Erasmus', login_tab:'Prihlásiť sa', register_tab:'Registrovať',
+    email_label:'Email', password_label:'Heslo', login_btn:'Prihlásiť sa',
+    demo_hint:'🎓 Demo: použite akýkoľvek email a heslo',
+    nav_main:'Hlavné', nav_tools:'Nástroje', tasks_today:'Úlohy dnes',
+    docs_pending:'Dokumenty', budget_left:'Zostatok rozpočtu', events_nearby:'Blízke udalosti',
+    checklist:'Zoznam — Deň 1–3', budget:'Mesačný rozpočet', upcoming:'Nadchádzajúce',
+    language_section:'Jazyk', language:'Jazyk rozhrania',
+    notifications_section:'Oznámenia', push_notif:'Push oznámenia',
+    deadline_reminders:'Pripomienky termínov', appearance_section:'Vzhľad',
+    currency:'Mena', profile_section:'Profil', city_label:'Mesto',
+    send:'Odoslať', save:'Uložiť', cancel:'Zrušiť',
+  }
+};
+let currentLang = 'en';
+
+function applyLang(lang) {
+  currentLang = lang;
+  const dict = i18n[lang] || i18n.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) el.textContent = dict[key];
+  });
+}
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+let authMode = 'login';
+let currentUser = null;
+
+function switchAuthTab(mode, el) {
+  authMode = mode;
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const regFields = document.getElementById('register-fields');
+  const btn = document.getElementById('login-btn');
+  if (mode === 'register') {
+    regFields.style.display = 'block';
+    btn.textContent = 'Create Account';
+  } else {
+    regFields.style.display = 'none';
+    btn.textContent = i18n[currentLang].login_btn || 'Sign in';
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const err = document.getElementById('login-error');
+
+  if (!email || !pass) {
+    err.textContent = 'Please fill in email and password.';
+    err.classList.add('show');
+    return;
+  }
+  if (!email.includes('@')) {
+    err.textContent = 'Please enter a valid email address.';
+    err.classList.add('show');
+    return;
+  }
+
+  err.classList.remove('show');
+
+  const name = authMode === 'register'
+    ? (document.getElementById('reg-name').value || email.split('@')[0])
+    : email.split('@')[0];
+  const initials = name.slice(0,2).toUpperCase();
+
+  currentUser = { email, name, initials };
+  document.getElementById('sidebar-name').textContent = name.split(' ')[0];
+  document.getElementById('sidebar-avatar').textContent = initials;
+  document.getElementById('settings-name-display').textContent = name;
+  document.getElementById('settings-email-display').textContent = email;
+  document.getElementById('settings-avatar').textContent = initials;
+
+  document.getElementById('login-overlay').classList.remove('open');
+  showToast('👋 Welcome, ' + name.split(' ')[0] + '!');
+}
+
+function doLogout() {
+  closeSettings();
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('login-overlay').classList.add('open');
+  showToast('Logged out successfully');
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+const pageTitles = {
+  dashboard:'Dashboard', assistant:'AI Assistant', paperwork:'Paperwork',
+  food:'Food & Places', events:'Events', transport:'Transport', calendar:'Calendar'
+};
+
 function navigate(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  if (el) el.classList.add('active');
-  document.getElementById('page-title').textContent = pageTitles[id] || id;
+  if (el && el.classList.contains('nav-item')) el.classList.add('active');
+  const dict = i18n[currentLang] || i18n.en;
+  document.getElementById('page-title').textContent = dict[id] || pageTitles[id] || id;
+  // Close search
+  document.getElementById('topbar-search').value = '';
+  restoreAllVisible();
+  if (id === 'calendar') renderCalendar();
 }
-function toggleCheck(item) { item.classList.toggle('done'); }
 
+function setMobActive(el) {
+  document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════ */
+function doSearch(term) {
+  term = term.toLowerCase().trim();
+  if (!term) { restoreAllVisible(); return; }
+  document.querySelectorAll('.card, .place-card, .event-card, .doc-item, .route-card, .checklist-item').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(term) ? '' : 'none';
+  });
+}
+
+function restoreAllVisible() {
+  document.querySelectorAll('.card, .place-card, .event-card, .doc-item, .route-card, .checklist-item').forEach(el => {
+    el.style.display = '';
+  });
+  document.getElementById('food-empty').classList.remove('show');
+  document.getElementById('events-empty').classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════
+   CHECKLIST
+═══════════════════════════════════════════ */
+function toggleCheck(item) {
+  item.classList.toggle('done');
+  const box = item.querySelector('.check-box');
+  const tag = item.querySelector('.check-tag');
+  if (item.classList.contains('done')) {
+    box.textContent = '✓';
+    if (tag) {
+      tag.textContent = 'Done';
+      tag.className = 'check-tag tag-done';
+    }
+    showToast('✓ Task completed!');
+  } else {
+    box.textContent = '';
+    if (tag) {
+      tag.textContent = 'Pending';
+      tag.className = 'check-tag tag-week';
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════
+   NOTIFICATIONS
+═══════════════════════════════════════════ */
+function openNotif() {
+  document.getElementById('notif-panel').classList.add('open');
+  document.getElementById('notif-backdrop').classList.add('open');
+}
+function closeNotif() {
+  document.getElementById('notif-panel').classList.remove('open');
+  document.getElementById('notif-backdrop').classList.remove('open');
+}
+function markRead(item) {
+  item.classList.remove('unread');
+  document.getElementById('notif-dot').style.display = 
+    document.querySelectorAll('.notif-item.unread').length > 0 ? 'block' : 'none';
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════ */
+function openSettings() {
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-overlay').classList.remove('open');
+}
+function closeSettingsOutside(e) {
+  if (e.target === document.getElementById('settings-overlay')) closeSettings();
+}
+function toggleSetting(el) {
+  el.classList.toggle('on');
+}
+function setLang(lang, pill) {
+  document.querySelectorAll('.lang-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  applyLang(lang);
+  // Update page title
+  const dict = i18n[lang] || i18n.en;
+  const current = document.querySelector('.nav-item.active .nav-label');
+  if (current) document.getElementById('page-title').textContent = current.textContent;
+}
+function saveSettings() {
+  const city = document.getElementById('settings-city').value;
+  document.getElementById('sidebar-city').textContent = city;
+  closeSettings();
+  showToast('✓ Settings saved');
+}
+
+/* ═══════════════════════════════════════════
+   BUDGET
+═══════════════════════════════════════════ */
+const budgetData = {
+  food:      { icon:'🍽️', label:'Food',      spent:98,  total:150, color:'var(--accent)' },
+  transport: { icon:'🚌', label:'Transport', spent:18,  total:60,  color:'var(--accent2)' },
+  social:    { icon:'🎉', label:'Social',    spent:14,  total:70,  color:'var(--accent5)' },
+  other:     { icon:'🛒', label:'Other',     spent:56,  total:70,  color:'var(--accent4)' },
+};
+
+function openBudget() {
+  const rows = document.getElementById('budget-edit-rows');
+  rows.innerHTML = '';
+  Object.entries(budgetData).forEach(([key, d]) => {
+    rows.innerHTML += `
+      <div class="budget-edit-row">
+        <div class="budget-edit-label">${d.icon} ${d.label}</div>
+        <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--muted);font-weight:600">
+          <span>Spent</span>
+          <input class="budget-edit-input" id="be-spent-${key}" type="number" value="${d.spent}" style="width:72px"/>
+          <span>/ Total</span>
+          <input class="budget-edit-input" id="be-total-${key}" type="number" value="${d.total}" style="width:72px"/>
+        </div>
+      </div>`;
+  });
+  const total = Object.values(budgetData).reduce((s,d) => s + d.total, 0);
+  document.getElementById('budget-total-input').value = total;
+  document.getElementById('budget-overlay').classList.add('open');
+}
+function closeBudget() {
+  document.getElementById('budget-overlay').classList.remove('open');
+}
+function closeBudgetOutside(e) {
+  if (e.target === document.getElementById('budget-overlay')) closeBudget();
+}
+function saveBudget() {
+  Object.keys(budgetData).forEach(key => {
+    const spentEl = document.getElementById('be-spent-' + key);
+    const totalEl = document.getElementById('be-total-' + key);
+    if (spentEl && totalEl) {
+      budgetData[key].spent = parseInt(spentEl.value) || 0;
+      budgetData[key].total = parseInt(totalEl.value) || 0;
+    }
+  });
+  updateBudgetDisplay();
+  closeBudget();
+  showToast('✓ Budget updated');
+}
+function updateBudgetDisplay() {
+  const totalSpent = Object.values(budgetData).reduce((s,d) => s + d.spent, 0);
+  const totalBudget = parseInt(document.getElementById('budget-total-input').value) ||
+                      Object.values(budgetData).reduce((s,d) => s + d.total, 0);
+  
+  Object.entries(budgetData).forEach(([key, d]) => {
+    const pct = d.total > 0 ? Math.round((d.spent / d.total) * 100) : 0;
+    const bar = document.getElementById('bar-' + key);
+    const val = document.getElementById('val-' + key);
+    if (bar) bar.style.width = pct + '%';
+    if (val) val.textContent = `€${d.spent} / €${d.total}`;
+  });
+  document.getElementById('budget-total-display').textContent = `€${totalSpent} / €${totalBudget}`;
+  const left = totalBudget - totalSpent;
+  document.getElementById('dash-budget').textContent = `€${left}`;
+}
+
+/* ═══════════════════════════════════════════
+   FILE UPLOAD
+═══════════════════════════════════════════ */
+function handleFileUpload(input) {
+  if (!input.files || input.files.length === 0) return;
+  const file = input.files[0];
+  const fname = document.getElementById('upload-filename');
+  fname.textContent = '📎 ' + file.name + ' — uploading...';
+  fname.classList.add('show');
+  
+  const area = document.getElementById('upload-area');
+  area.style.borderColor = 'var(--accent3)';
+  
+  setTimeout(() => {
+    fname.textContent = '✓ ' + file.name + ' — translated!';
+    document.getElementById('translation-original').textContent =
+      'Original file: "' + file.name + '"';
+    document.getElementById('translation-demo').classList.add('show');
+    area.style.borderColor = '';
+    showToast('✓ Document translated successfully');
+  }, 1500);
+}
+
+/* Drag & drop support */
+const uploadArea = document.getElementById('upload-area');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('drag-over');
+  const dt = e.dataTransfer;
+  if (dt.files.length > 0) {
+    document.getElementById('file-input').files = dt.files;
+    handleFileUpload(document.getElementById('file-input'));
+  }
+});
+
+/* ═══════════════════════════════════════════
+   FILTERS
+═══════════════════════════════════════════ */
+function setupFilters(rowId, gridId, emptyId) {
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  row.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      row.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.getAttribute('data-filter');
+      const grid = document.getElementById(gridId);
+      const items = grid.querySelectorAll('[data-tags]');
+      let visible = 0;
+      items.forEach(item => {
+        const tags = item.getAttribute('data-tags') || '';
+        const show = filter === 'all' || tags.split(' ').includes(filter);
+        item.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      const empty = document.getElementById(emptyId);
+      if (empty) empty.classList.toggle('show', visible === 0);
+    });
+  });
+}
+
+setupFilters('food-filters', 'food-grid', 'food-empty');
+setupFilters('events-filters', 'events-grid', 'events-empty');
+
+/* ═══════════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════════ */
+const calEvents = [
+  { day:12, month:2, year:2026, title:'🔴 Dorm Registration Deadline', sub:'Office 104 · by 17:00', type:'deadline', time:'17:00' },
+  { day:13, month:2, year:2026, title:'🎨 Slovak Culture Night', sub:'Cultural Center · €3', type:'event', time:'19:00' },
+  { day:14, month:2, year:2026, title:'🚶 ESN City Walking Tour', sub:'SNP Square · Free', type:'event', time:'10:00' },
+  { day:14, month:2, year:2026, title:'🏞️ ESN Hike — Devín Castle', sub:'Devín Ruins · Free', type:'event', time:'09:00' },
+  { day:15, month:2, year:2026, title:'🎓 Orientation Day — STU', sub:'Faculty of Informatics · Room A1', type:'transport', time:'09:00' },
+  { day:15, month:2, year:2026, title:'🏰 Bratislava Castle Visit', sub:'Castle Hill · €5 student', type:'event', time:'11:00' },
+  { day:16, month:2, year:2026, title:'🎭 ESN Buddy Program', sub:'STU Campus · Free', type:'event', time:'17:00' },
+  { day:18, month:2, year:2026, title:'🌍 ESN International Dinner', sub:'STU Main Hall · €5', type:'event', time:'18:00' },
+  { day:19, month:2, year:2026, title:'🎲 Board Game Night', sub:'Common Room B2 · Free', type:'event', time:'19:00' },
+  { day:20, month:2, year:2026, title:'🎵 Jazz at Žilina Café', sub:'Staré Mesto · €5', type:'event', time:'20:00' },
+  { day:20, month:2, year:2026, title:'🔴 Course Enrollment Deadline', sub:'Academic office · 23:59', type:'deadline', time:'23:59' },
+  { day:21, month:2, year:2026, title:'🌿 Petržalka Park Picnic', sub:'Sad Janka Kráľa · Free', type:'event', time:'13:00' },
+];
+
+const calState = { month: 2, year: 2026 }; // 0-indexed month (2 = March)
+let selectedCalDay = null;
+
+function calNav(dir) {
+  calState.month += dir;
+  if (calState.month > 11) { calState.month = 0; calState.year++; }
+  if (calState.month < 0)  { calState.month = 11; calState.year--; }
+  selectedCalDay = null;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const { month, year } = calState;
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-title').textContent = monthNames[month] + ' ' + year;
+
+  const today = new Date();
+  const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+  const mondayOffset = (firstDay + 6) % 7; // shift so Mon=0
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
+
+  // Get days that have events
+  const eventDays = new Set(
+    calEvents
+      .filter(e => e.month === month && e.year === year)
+      .map(e => e.day)
+  );
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  // Day labels
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => {
+    const lbl = document.createElement('div');
+    lbl.className = 'cal-day-label';
+    lbl.textContent = d;
+    grid.appendChild(lbl);
+  });
+
+  // Previous month overflow
+  for (let i = mondayOffset - 1; i >= 0; i--) {
+    const day = document.createElement('div');
+    day.className = 'cal-day other-month';
+    day.textContent = daysInPrev - i;
+    grid.appendChild(day);
+  }
+
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const day = document.createElement('div');
+    day.className = 'cal-day';
+    day.textContent = d;
+    if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear())
+      day.classList.add('today');
+    if (eventDays.has(d)) day.classList.add('has-event');
+    if (selectedCalDay === d) day.classList.add('selected');
+    day.onclick = function(e) { showCalPopup(d, this, e); };
+    grid.appendChild(day);
+  }
+
+  // Next month overflow to fill grid
+  const total = mondayOffset + daysInMonth;
+  const trailing = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let i = 1; i <= trailing; i++) {
+    const day = document.createElement('div');
+    day.className = 'cal-day other-month';
+    day.textContent = i;
+    grid.appendChild(day);
+  }
+
+  // Update event list
+  renderCalEventList();
+  document.getElementById('cal-popup-container').innerHTML = '';
+}
+
+function showCalPopup(dayNum, el, e) {
+  e.stopPropagation();
+  document.getElementById('cal-popup-container').innerHTML = '';
+  selectedCalDay = dayNum;
+
+  const dayEvents = calEvents.filter(ev =>
+    ev.day === dayNum && ev.month === calState.month && ev.year === calState.year
+  );
+
+  const popup = document.createElement('div');
+  popup.className = 'cal-popup';
+
+  // Position relative to the calendar card
+  const elRect = el.getBoundingClientRect();
+  const cardRect = el.closest('.card').getBoundingClientRect();
+  let top = elRect.bottom - cardRect.top + 8;
+  let left = elRect.left - cardRect.left;
+  if (left + 250 > cardRect.width) left = cardRect.width - 255;
+
+  popup.style.top = top + 'px';
+  popup.style.left = left + 'px';
+
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  popup.innerHTML = `<div class="cal-popup-title">${dayNum} ${monthNames[calState.month]}</div>`;
+
+  if (dayEvents.length === 0) {
+    popup.innerHTML += `<div class="cal-popup-none">No events this day</div>`;
+  } else {
+    dayEvents.forEach(ev => {
+      popup.innerHTML += `<div class="cal-popup-item">${ev.title} <span style="margin-left:auto;color:var(--muted);font-size:0.72rem">${ev.time}</span></div>`;
+    });
+  }
+
+  popup.innerHTML += `<div style="margin-top:0.6rem;font-size:0.72rem;color:var(--muted);cursor:pointer;font-weight:700" onclick="document.getElementById('cal-popup-container').innerHTML='';selectedCalDay=null;renderCalendar()">✕ close</div>`;
+
+  document.getElementById('cal-popup-container').appendChild(popup);
+  renderCalendar(); // re-render to show selection
+  document.getElementById('cal-popup-container').appendChild(popup); // re-add after re-render
+}
+
+function renderCalEventList() {
+  const list = document.getElementById('cal-event-list');
+  const evs = calEvents.filter(e => e.month === calState.month && e.year === calState.year);
+  if (evs.length === 0) {
+    list.innerHTML = '<div style="padding:1rem;color:var(--muted);font-size:0.88rem;font-weight:600">No events this month.</div>';
+    return;
+  }
+  list.innerHTML = evs.map(ev => `
+    <div class="event-item ${ev.type === 'deadline' ? 'deadline' : ev.type === 'transport' ? 'transport' : ''}">
+      <div class="event-date-block">
+        <div class="event-date-num">${ev.day}</div>
+        <div class="event-date-mon">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ev.month]}</div>
+      </div>
+      <div class="event-info">
+        <div class="event-title">${ev.title}</div>
+        <div class="event-sub">${ev.sub}</div>
+      </div>
+      <div class="event-time" ${ev.type === 'deadline' ? 'style="color:var(--accent)"' : ''}>${ev.time}</div>
+    </div>
+  `).join('');
+}
+
+// Close popup when clicking outside
+document.addEventListener('click', () => {
+  if (document.getElementById('cal-popup-container').innerHTML) {
+    document.getElementById('cal-popup-container').innerHTML = '';
+    selectedCalDay = null;
+    renderCalendar();
+  }
+});
+
+/* ═══════════════════════════════════════════
+   EVENTS — JOIN/LEAVE
+═══════════════════════════════════════════ */
+function toggleJoin(btn) {
+  const card = btn.closest('.event-card');
+  const meta = card.querySelector('.event-card-meta').textContent;
+
+  // Extract day number from text like "Sat 14 Mar"
+  const match = meta.match(/\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i);
+  const monthMap = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+
+  if (btn.classList.contains('joined')) {
+    btn.classList.remove('joined');
+    btn.textContent = '+ Join';
+    showToast('Removed from calendar');
+    if (match) {
+      const day = parseInt(match[1]);
+      const mo = monthMap[match[2].toLowerCase()];
+      const idx = calEvents.findIndex(e => e.day === day && e.month === mo && e.title.includes(card.querySelector('.event-card-title').textContent));
+      // Remove from cal if manually added
+    }
+  } else {
+    btn.classList.add('joined');
+    const dict = i18n[currentLang] || i18n.en;
+    btn.textContent = '✓ Going';
+    showToast('✓ Saved to your calendar!');
+
+    if (match) {
+      const day = parseInt(match[1]);
+      const mo = monthMap[match[2].toLowerCase()];
+      const title = card.querySelector('.event-card-title').textContent;
+      const sub = card.querySelector('.event-card-meta').textContent.split('\n')[1] || '';
+      const timeMatch = meta.match(/(\d{1,2}:\d{2})/);
+      const time = timeMatch ? timeMatch[0] : '';
+
+      // Add to calEvents if not already there
+      const exists = calEvents.some(e => e.day === day && e.month === mo && e.title.includes(title.slice(0,10)));
+      if (!exists) {
+        calEvents.push({ day, month: mo, year: 2026, title: '🎉 ' + title, sub: sub.trim(), type: 'event', time });
+      }
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TRANSPORT
+═══════════════════════════════════════════ */
+function showRoute() {
+  document.getElementById('route-result').classList.add('show');
+  showToast('✓ Route found — 18 min');
+}
+
+/* ═══════════════════════════════════════════
+   AI CHAT
+═══════════════════════════════════════════ */
 const aiResponses = {
   'Translate my dorm form': "Sure! Upload your document in the Paperwork tab and I'll translate it instantly. Based on typical STU forms, you'll need: passport number, arrival date (DD/MM/YYYY), home address, and emergency contact. Field 7 (Zábezpeka) = €150 security deposit due within 3 days.",
   'Find food nearby': "From Mlynská dolina: 🥙 Bufet STU (150m, €2–4, student canteen!), 🍕 Balkán Pizza (400m, €3–6, huge slices), ☕ Caffe Kút (200m, €1.5–3, great for studying). All rated by Erasmus students, not tourists!",
   "What's on this weekend?": "This weekend: 🚶 ESN Walking Tour (Sat 10AM, SNP Square, free!) 🏰 Bratislava Castle (Sun 11AM, €5 student) 🎨 Slovak Culture Night (Fri 7PM, €3) 🎵 Jazz at Žilina (Fri 8PM, €5) — calm and cozy, no party vibe!",
-  'How do I get a student card?': "1️⃣ International Office — Building A, Room 101, Mon–Fri 9–12. 2️⃣ Bring passport + enrollment confirmation + 1 photo. 3️⃣ Pay €15. 4️⃣ Card ready in 3–5 days. Gives you 50% off transport + museum and restaurant discounts!",
+  'How do I get a student card?': "1️⃣ International Office, Building A, Room 101, Mon–Fri 9–12. 2️⃣ Bring passport + enrollment confirmation + 1 photo. 3️⃣ Pay €15. 4️⃣ Card ready in 3–5 days. Gives you 50% off transport + museum and restaurant discounts!",
   'Cheap places to eat near STU': "Best budget spots: 🥙 Bufet STU (on campus, €3.50 daily menu incl. soup), 🍜 Pho Saigon (10 min, €4–7, huge portions), 🥗 Fresh Market (8 min, €2–5, vegetarian options). Canteen menu changes daily!",
   'Translate a Slovak document': "Go to the Paperwork tab and click the upload area! I translate Slovak, Czech, Hungarian and German. Uncertain translations get flagged in yellow, legal clauses get a special warning. I also have a verified field guide for STU dormitory forms!",
-  'How does public transport work?': "DPB basics: 🎫 Monthly student pass = €13.20 (vs €24) — buy at DPB office with student ID + passport. 📱 Always validate when boarding (fines = €50). Key lines: Bus 32 (dorm area), Tram 4 (city center), Bus 39 (Old Town). Check Transport tab for routes!"
+  'How does public transport work?': "DPB basics: 🎫 Monthly student pass = €13.20 (vs €24). Buy at DPB office with student ID + passport. 📱 Always validate when boarding (fines = €50). Key lines: Bus 32 (dorm area), Tram 4 (city center), Bus 39 (Old Town). Check Transport tab for routes!"
 };
 const fallback = [
-  "The International Office (Building A, Mon–Fri 9–12) is your best resource for official questions in Bratislava.",
-  "Check the ESN Bratislava group — they have firsthand advice from current Erasmus students. See the Events tab for meetups!",
-  "Always carry your ISIC card — many places in Bratislava offer 10–50% student discounts you might not know about.",
-  "Tackle paperwork within your first 48 hours — the dormitory office is busiest in week 1, so go early!"
+  "Great question! Try exploring the relevant section on the left sidebar for more details.",
+  "For Bratislava-specific help, you can also ask me about food, transit, or paperwork.",
+  "I'm here to help! Check out the Events tab for what's happening this weekend.",
+  "You can upload any Slovak/Czech document in the Paperwork section for instant translation."
 ];
 let msgCount = 0;
 
@@ -935,14 +2156,18 @@ function addMessage(cid, text, isUser) {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'ai-msg' + (isUser ? ' user' : '');
-  d.innerHTML = `<div class="msg-avatar" style="${isUser ? 'background:rgba(232,82,26,0.2)' : ''}">${isUser ? 'AL' : '✦'}</div><div class="msg-bubble">${text}</div>`;
+  d.innerHTML = `<div class="msg-avatar" style="${isUser ? 'background:rgba(232,82,26,0.2)' : ''}">${isUser ? (currentUser ? currentUser.initials : 'AL') : '✦'}</div><div class="msg-bubble">${text}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
 function sendAIMsg(el, cid) {
   const text = el.textContent;
   addMessage(cid, text, true);
-  setTimeout(() => addMessage(cid, aiResponses[text] || fallback[msgCount++ % fallback.length], false), 700);
+  el.style.opacity = '0.5';
+  setTimeout(() => {
+    addMessage(cid, aiResponses[text] || fallback[msgCount++ % fallback.length], false);
+    el.style.opacity = '';
+  }, 700);
 }
 function sendAIInput(cid) {
   const inp = document.getElementById('ai-input-' + cid);
@@ -951,7 +2176,7 @@ function sendAIInput(cid) {
   if (cid === 'food') {
     const r = document.getElementById('ai-food-response');
     r.className = 'food-ai-resp show';
-    r.innerHTML = '✦ ' + (aiResponses[text] || `Based on "${text}": 🥙 Bufet STU (150m, €3.50/meal), 🍕 Balkán Pizza (400m, €3–6), 🍜 Pho Saigon (800m, €4–7). All Erasmus-rated — no generic Google Maps results!`);
+    r.innerHTML = '✦ ' + (aiResponses[text] || 'Searching for matching places near you... Check the list above!');
     inp.value = '';
     return;
   }
@@ -959,18 +2184,25 @@ function sendAIInput(cid) {
   inp.value = '';
   setTimeout(() => addMessage(cid, aiResponses[text] || fallback[msgCount++ % fallback.length], false), 700);
 }
-function simulateUpload() { document.getElementById('translation-demo').classList.add('show'); }
-function showRoute() { document.getElementById('route-result').classList.add('show'); }
-function toggleJoin(btn) {
-  if (btn.classList.contains('joined')) { btn.classList.remove('joined'); btn.textContent = '+ Join'; }
-  else { btn.classList.add('joined'); btn.textContent = '✓ Going'; }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
-document.querySelectorAll('.filter-row').forEach(row => {
-  row.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
-    row.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }));
-});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+// Render calendar on first load (called when calendar page opens)
+// Also update notif dot
+document.getElementById('notif-dot').style.display = 'block';
 </script>
 </body>
 </html>

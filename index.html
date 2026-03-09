@@ -29,7 +29,6 @@
     overflow-x: hidden;
   }
 
-  /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     z-index: 100;
@@ -61,7 +60,6 @@
   }
   .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
 
-  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: grid; grid-template-columns: 1fr 1fr;
@@ -145,7 +143,6 @@
   .stat-val { font-size: 2rem; font-weight: 900; letter-spacing: -0.04em; }
   .stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-top: 0.1rem; }
 
-  /* hero visual */
   .hero-visual {
     position: relative; display: flex; justify-content: center; align-items: center;
     animation: fadeUp 0.6s 0.2s ease both;
@@ -226,7 +223,6 @@
     font-size: 0.58rem; font-weight: 700; color: var(--accent3);
   }
 
-  /* floating cards */
   .float-card {
     position: absolute; background: var(--card);
     border-radius: 14px; padding: 0.8rem 1rem;
@@ -248,7 +244,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── PAIN POINTS STRIP ── */
   .strip {
     background: var(--ink); color: var(--cream);
     padding: 1rem 0; overflow: hidden;
@@ -268,7 +263,6 @@
   }
   .strip-item span { opacity: 1; color: var(--accent); }
 
-  /* ── PROBLEMS ── */
   .section { padding: 6rem 2.5rem; }
   .section-label {
     font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
@@ -311,7 +305,6 @@
     font-size: 0.95rem;
   }
 
-  /* ── FEATURES ── */
   .features { padding: 6rem 2.5rem; background: var(--ink); color: var(--cream); }
   .features .section-label { color: var(--accent3); }
   .features .section-title em { color: var(--accent); }
@@ -379,7 +372,6 @@
   }
   .chat-bubble.ai { background: rgba(255,255,255,0.25); font-weight: 600; }
 
-  /* ── HOW IT WORKS ── */
   .how-grid {
     display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 0; margin-top: 4rem;
@@ -404,7 +396,6 @@
   .how-title { font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
   .how-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
 
-  /* ── PERSONA ── */
   .persona-section {
     background: var(--warm); padding: 6rem 2.5rem;
   }
@@ -439,7 +430,6 @@
   }
   .need-chip.hot { background: rgba(232,82,26,0.1); border-color: rgba(232,82,26,0.2); color: var(--accent); }
 
-  /* ── CTA ── */
   .cta-section {
     padding: 8rem 2.5rem; text-align: center;
     position: relative; overflow: hidden;
@@ -454,7 +444,6 @@
   .cta-section p { color: var(--muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto 2.5rem; }
   .cta-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 
-  /* ── FOOTER ── */
   footer {
     background: var(--ink); color: rgba(255,255,255,0.4);
     padding: 2.5rem; display: flex;
@@ -465,7 +454,6 @@
   footer a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
   footer a:hover { color: var(--cream); }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; padding-top: 7rem; }
     .hero-visual { display: none; }
@@ -482,7 +470,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="logo">Roamly <span class="logo-dot"></span></div>
   <ul class="nav-links">
@@ -493,7 +480,6 @@
   <a href="roamly-app.html" class="nav-cta">Try the App →</a>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div>
     <div class="hero-tag"><span></span> Built for Erasmus Students</div>
@@ -573,7 +559,6 @@
   </div>
 </section>
 
-<!-- STRIP -->
 <div class="strip">
   <div class="strip-inner">
     <div class="strip-item"><span>✗</span> "Translate and pray it's correct"</div>
@@ -591,7 +576,6 @@
   </div>
 </div>
 
-<!-- PROBLEMS -->
 <section class="section" id="problems">
   <div class="section-label">The Reality</div>
   <h2 class="section-title">Exchange life is exciting.<br>The <em>admin</em> isn't.</h2>
@@ -635,7 +619,6 @@
   </div>
 </section>
 
-<!-- FEATURES -->
 <section class="features" id="features">
   <div class="section-label">What Roamly Does</div>
   <h2 class="section-title">Everything you need,<br><em>one place</em></h2>
@@ -697,7 +680,6 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section class="section" id="how">
   <div class="section-label">Process</div>
   <h2 class="section-title">Up and running<br>in <em>minutes</em></h2>
@@ -725,7 +707,6 @@
   </div>
 </section>
 
-<!-- PERSONA -->
 <section class="persona-section">
   <div class="section-label">Who We Build For</div>
   <h2 class="section-title">Meet <em>Alex</em></h2>
@@ -751,7 +732,6 @@
   </div>
 </section>
 
-<!-- CTA -->
 <section class="cta-section" id="cta">
   <div class="section-label">Demo</div>
   <h2 class="section-title">Ready to <em>actually enjoy</em> your exchange?</h2>
@@ -763,7 +743,6 @@
   <p style="margin-top:1.5rem;font-size:0.8rem;color:var(--muted)">No spam. No credit card. Just early access when we're ready.</p>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">Roamly<span style="color:var(--accent)">.</span></div>
   <div>Made with ♥ for Erasmus students everywhere</div>
