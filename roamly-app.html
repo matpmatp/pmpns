@@ -478,7 +478,14 @@ body {
   content: ''; width: 4px; height: 4px; border-radius: 50%;
   background: var(--accent3); position: absolute; bottom: 3px;
 }
-.cal-day.today.has-event::after { background: rgba(255,255,255,0.65); }
+.cal-day.has-joined::after {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent2); position: absolute; bottom: 3px;
+}
+.cal-day.has-event.has-joined::after {
+  background: var(--accent2);
+}
+.cal-day.today.has-event::after, .cal-day.today.has-joined::after { background: rgba(255,255,255,0.65); }
 .cal-day.other-month { color: var(--muted); opacity: 0.38; pointer-events: none; }
 .cal-nav-btn {
   width: 32px; height: 32px; border-radius: 50%;
@@ -897,7 +904,7 @@ body {
       <div class="settings-row">
         <div>
           <div class="settings-row-label" id="settings-name-display">Alex Kowalski</div>
-          <div class="settings-row-sub" id="settings-email-display">alex@student.eu</div>
+          <div class="settings-row-sub" id="settings-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e48588819ca497909180818a90ca8191">[email&#160;protected]</a></div>
         </div>
         <div class="user-avatar" style="background:linear-gradient(135deg,var(--accent),#ff8c5a);width:44px;height:44px;font-size:0.9rem" id="settings-avatar">AL</div>
       </div>
@@ -950,7 +957,7 @@ body {
           <div class="settings-row-label" data-i18n="currency">Currency</div>
           <div class="settings-row-sub">Shown throughout the app</div>
         </div>
-        <select class="settings-input" id="settings-currency" style="cursor:pointer">
+        <select class="settings-input" id="settings-currency" style="cursor:pointer" onchange="applyNewCurrency(this.value)">
           <option value="EUR">€ EUR</option>
           <option value="USD">$ USD</option>
           <option value="PLN">zł PLN</option>
@@ -1490,6 +1497,7 @@ body {
           <div style="display:flex;gap:1rem;margin-top:1rem;font-size:0.75rem;font-weight:700;color:var(--muted)">
             <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span>Today</div>
             <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent3);display:inline-block"></span>Event</div>
+            <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block"></span>Going ✓</div>
           </div>
           <!-- Day popup container -->
           <div id="cal-popup-container"></div>
@@ -1538,7 +1546,7 @@ body {
   </div>
 </nav>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ═══════════════════════════════════════════
    TRANSLATIONS
 ═══════════════════════════════════════════ */
@@ -1648,6 +1656,7 @@ function doLogin() {
   const initials = name.slice(0,2).toUpperCase();
 
   currentUser = { email, name, initials };
+  try { sessionStorage.setItem('roamly_user', JSON.stringify(currentUser)); } catch(e) {}
   document.getElementById('sidebar-name').textContent = name.split(' ')[0];
   document.getElementById('sidebar-avatar').textContent = initials;
   document.getElementById('settings-name-display').textContent = name;
@@ -1659,6 +1668,7 @@ function doLogin() {
 }
 
 function doLogout() {
+  try { sessionStorage.removeItem('roamly_user'); } catch(e) {}
   closeSettings();
   document.getElementById('login-email').value = '';
   document.getElementById('login-password').value = '';
@@ -1784,6 +1794,47 @@ function saveSettings() {
 }
 
 /* ═══════════════════════════════════════════
+   CURRENCY
+═══════════════════════════════════════════ */
+const currencyRates = { EUR: 1, USD: 1.09, PLN: 4.28, CZK: 25.1 };
+const currencySymbols = { EUR: '€', USD: '$', PLN: 'zł', CZK: 'Kč' };
+let activeCurrency = 'EUR';
+let activeCurrencyBase = 'EUR'; // what the budgetData is stored in (always EUR-equivalent)
+
+function convertAmount(amtEur, toCurrency) {
+  return Math.round(amtEur * currencyRates[toCurrency]);
+}
+function fmtCurrency(amtEur, currency) {
+  const sym = currencySymbols[currency] || '€';
+  const val = convertAmount(amtEur, currency);
+  return sym + val;
+}
+
+function applyNewCurrency(newCurrency) {
+  const old = activeCurrency;
+  activeCurrency = newCurrency;
+  const sym = currencySymbols[newCurrency] || '€';
+
+  // Update budget display
+  Object.entries(budgetData).forEach(([key, d]) => {
+    const bar = document.getElementById('bar-' + key);
+    const val = document.getElementById('val-' + key);
+    const pct = d.total > 0 ? Math.round((d.spent / d.total) * 100) : 0;
+    if (bar) bar.style.width = pct + '%';
+    if (val) val.textContent = sym + convertAmount(d.spent, newCurrency) + ' / ' + sym + convertAmount(d.total, newCurrency);
+  });
+
+  const totalSpent = Object.values(budgetData).reduce((s,d) => s + d.spent, 0);
+  const totalBudget = Object.values(budgetData).reduce((s,d) => s + d.total, 0);
+  document.getElementById('budget-total-display').textContent =
+    sym + convertAmount(totalSpent, newCurrency) + ' / ' + sym + convertAmount(totalBudget, newCurrency);
+  const left = totalBudget - totalSpent;
+  document.getElementById('dash-budget').textContent = sym + convertAmount(left, newCurrency);
+
+  showToast('✓ Currency changed to ' + newCurrency);
+}
+
+/* ═══════════════════════════════════════════
    BUDGET
 ═══════════════════════════════════════════ */
 const budgetData = {
@@ -1832,20 +1883,22 @@ function saveBudget() {
   showToast('✓ Budget updated');
 }
 function updateBudgetDisplay() {
+  const sym = currencySymbols[activeCurrency] || '€';
   const totalSpent = Object.values(budgetData).reduce((s,d) => s + d.spent, 0);
   const totalBudget = parseInt(document.getElementById('budget-total-input').value) ||
                       Object.values(budgetData).reduce((s,d) => s + d.total, 0);
-  
+
   Object.entries(budgetData).forEach(([key, d]) => {
     const pct = d.total > 0 ? Math.round((d.spent / d.total) * 100) : 0;
     const bar = document.getElementById('bar-' + key);
     const val = document.getElementById('val-' + key);
     if (bar) bar.style.width = pct + '%';
-    if (val) val.textContent = `€${d.spent} / €${d.total}`;
+    if (val) val.textContent = sym + convertAmount(d.spent, activeCurrency) + ' / ' + sym + convertAmount(d.total, activeCurrency);
   });
-  document.getElementById('budget-total-display').textContent = `€${totalSpent} / €${totalBudget}`;
+  document.getElementById('budget-total-display').textContent =
+    sym + convertAmount(totalSpent, activeCurrency) + ' / ' + sym + convertAmount(totalBudget, activeCurrency);
   const left = totalBudget - totalSpent;
-  document.getElementById('dash-budget').textContent = `€${left}`;
+  document.getElementById('dash-budget').textContent = sym + convertAmount(left, activeCurrency);
 }
 
 /* ═══════════════════════════════════════════
@@ -1917,6 +1970,11 @@ setupFilters('events-filters', 'events-grid', 'events-empty');
 /* ═══════════════════════════════════════════
    CALENDAR
 ═══════════════════════════════════════════ */
+// Track which events the user has joined (by day+month+year+title key)
+const joinedEventKeys = new Set();
+// Pre-mark the one that starts as "joined" (Slovak Culture Night, Mar 13)
+joinedEventKeys.add('13-2-2026-Slovak Culture Night');
+
 const calEvents = [
   { day:12, month:2, year:2026, title:'🔴 Dorm Registration Deadline', sub:'Office 104 · by 17:00', type:'deadline', time:'17:00' },
   { day:13, month:2, year:2026, title:'🎨 Slovak Culture Night', sub:'Cultural Center · €3', type:'event', time:'19:00' },
@@ -1960,6 +2018,12 @@ function renderCalendar() {
       .filter(e => e.month === month && e.year === year)
       .map(e => e.day)
   );
+  // Get days that have joined events
+  const joinedDays = new Set(
+    calEvents
+      .filter(e => e.month === month && e.year === year && joinedEventKeys.has(e.day+'-'+e.month+'-'+e.year+'-'+e.title.replace(/^[🎉🚶🎨🏰🌍🎲🎵🏞️🌿🎭🔴🎓 ]/g,'')))
+      .map(e => e.day)
+  );
 
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
@@ -1988,6 +2052,7 @@ function renderCalendar() {
     if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear())
       day.classList.add('today');
     if (eventDays.has(d)) day.classList.add('has-event');
+    if (joinedDays.has(d)) day.classList.add('has-joined');
     if (selectedCalDay === d) day.classList.add('selected');
     day.onclick = function(e) { showCalPopup(d, this, e); };
     grid.appendChild(day);
@@ -2055,8 +2120,12 @@ function renderCalEventList() {
     list.innerHTML = '<div style="padding:1rem;color:var(--muted);font-size:0.88rem;font-weight:600">No events this month.</div>';
     return;
   }
-  list.innerHTML = evs.map(ev => `
-    <div class="event-item ${ev.type === 'deadline' ? 'deadline' : ev.type === 'transport' ? 'transport' : ''}">
+  list.innerHTML = evs.map(ev => {
+    const cleanTitle = ev.title.replace(/^[🎉🚶🎨🏰🌍🎲🎵🏞️🌿🎭🔴🎓 ]/g,'');
+    const key = ev.day+'-'+ev.month+'-'+ev.year+'-'+cleanTitle;
+    const isJoined = joinedEventKeys.has(key);
+    return `
+    <div class="event-item ${ev.type === 'deadline' ? 'deadline' : ev.type === 'transport' ? 'transport' : ''}" style="${isJoined ? 'border-left-color:var(--accent2)' : ''}">
       <div class="event-date-block">
         <div class="event-date-num">${ev.day}</div>
         <div class="event-date-mon">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ev.month]}</div>
@@ -2065,9 +2134,12 @@ function renderCalEventList() {
         <div class="event-title">${ev.title}</div>
         <div class="event-sub">${ev.sub}</div>
       </div>
-      <div class="event-time" ${ev.type === 'deadline' ? 'style="color:var(--accent)"' : ''}>${ev.time}</div>
-    </div>
-  `).join('');
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.3rem">
+        <div class="event-time" ${ev.type === 'deadline' ? 'style="color:var(--accent)"' : ''}>${ev.time}</div>
+        ${isJoined ? '<div style="font-size:0.65rem;font-weight:800;color:var(--accent2);background:rgba(45,107,228,0.1);padding:0.15rem 0.5rem;border-radius:2rem;white-space:nowrap">✓ Going</div>' : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // Close popup when clicking outside
@@ -2085,41 +2157,48 @@ document.addEventListener('click', () => {
 function toggleJoin(btn) {
   const card = btn.closest('.event-card');
   const meta = card.querySelector('.event-card-meta').textContent;
+  const title = card.querySelector('.event-card-title').textContent;
 
   // Extract day number from text like "Sat 14 Mar"
   const match = meta.match(/\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i);
   const monthMap = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 
+  let day, mo;
+  if (match) {
+    day = parseInt(match[1]);
+    mo = monthMap[match[2].toLowerCase()];
+  }
+
+  const key = day + '-' + mo + '-' + 2026 + '-' + title;
+
   if (btn.classList.contains('joined')) {
     btn.classList.remove('joined');
     btn.textContent = '+ Join';
     showToast('Removed from calendar');
-    if (match) {
-      const day = parseInt(match[1]);
-      const mo = monthMap[match[2].toLowerCase()];
-      const idx = calEvents.findIndex(e => e.day === day && e.month === mo && e.title.includes(card.querySelector('.event-card-title').textContent));
-      // Remove from cal if manually added
-    }
+    joinedEventKeys.delete(key);
+    // Also remove from calEvents if it was dynamically added
+    const idx = calEvents.findIndex(e => e.day === day && e.month === mo && e.title.includes('🎉 ' + title));
+    if (idx !== -1) calEvents.splice(idx, 1);
   } else {
     btn.classList.add('joined');
-    const dict = i18n[currentLang] || i18n.en;
     btn.textContent = '✓ Going';
     showToast('✓ Saved to your calendar!');
+    joinedEventKeys.add(key);
 
-    if (match) {
-      const day = parseInt(match[1]);
-      const mo = monthMap[match[2].toLowerCase()];
-      const title = card.querySelector('.event-card-title').textContent;
-      const sub = card.querySelector('.event-card-meta').textContent.split('\n')[1] || '';
+    if (day !== undefined) {
+      const sub = (meta.split('\n')[1] || '').trim();
       const timeMatch = meta.match(/(\d{1,2}:\d{2})/);
       const time = timeMatch ? timeMatch[0] : '';
-
       // Add to calEvents if not already there
       const exists = calEvents.some(e => e.day === day && e.month === mo && e.title.includes(title.slice(0,10)));
       if (!exists) {
-        calEvents.push({ day, month: mo, year: 2026, title: '🎉 ' + title, sub: sub.trim(), type: 'event', time });
+        calEvents.push({ day, month: mo, year: 2026, title: '🎉 ' + title, sub, type: 'event', time });
       }
     }
+  }
+  // Refresh calendar if currently visible
+  if (document.getElementById('page-calendar').classList.contains('active')) {
+    renderCalendar();
   }
 }
 
@@ -2200,8 +2279,24 @@ function showToast(msg) {
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
-// Render calendar on first load (called when calendar page opens)
-// Also update notif dot
+// Session persistence — survive page refresh
+(function restoreSession() {
+  try {
+    const saved = sessionStorage.getItem('roamly_user');
+    if (saved) {
+      const u = JSON.parse(saved);
+      currentUser = u;
+      document.getElementById('sidebar-name').textContent = u.name.split(' ')[0];
+      document.getElementById('sidebar-avatar').textContent = u.initials;
+      document.getElementById('settings-name-display').textContent = u.name;
+      document.getElementById('settings-email-display').textContent = u.email;
+      document.getElementById('settings-avatar').textContent = u.initials;
+      document.getElementById('login-overlay').classList.remove('open');
+    }
+  } catch(e) {}
+})();
+
+// Notification dot
 document.getElementById('notif-dot').style.display = 'block';
 </script>
 </body>
