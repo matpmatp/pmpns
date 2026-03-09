@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExchangeCompanion — Your AI Guide Abroad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161d;
+    --surface2: #1a1e28;
+    --surface3: #212636;
+    --border: #2a2f3e;
+    --accent: #5b8cff;
+    --accent2: #ff6b6b;
+    --accent3: #43d9a0;
+    --accent4: #ffd166;
+    --text: #e8eaf2;
+    --text2: #8b90a7;
+    --text3: #5a607a;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LANDING ── */
+  #landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.4;
+  }
+  .bg-orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
+  }
+  .orb1 { width: 500px; height: 500px; background: rgba(91,140,255,0.12); top: -100px; left: -100px; }
+  .orb2 { width: 400px; height: 400px; background: rgba(67,217,160,0.08); bottom: -50px; right: -80px; }
+  .orb3 { width: 300px; height: 300px; background: rgba(255,107,107,0.07); top: 40%; left: 60%; }
+
+  .landing-content { position: relative; z-index: 2; text-align: center; max-width: 680px; }
+  .pill-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(91,140,255,0.12); border: 1px solid rgba(91,140,255,0.3);
+    border-radius: 100px; padding: 6px 16px; font-size: 13px;
+    color: var(--accent); font-weight: 500; margin-bottom: 28px;
+    animation: fadeInUp 0.6s ease both;
+  }
+  .dot-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent3);
+    animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+  .landing-h1 {
+    font-family: 'Syne', sans-serif; font-size: clamp(40px, 8vw, 72px); font-weight: 800;
+    line-height: 1.05; letter-spacing: -2px; margin-bottom: 20px;
+    animation: fadeInUp 0.7s 0.1s ease both;
+  }
+  .landing-h1 em { font-style: normal; color: var(--accent); }
+  .landing-h1 .serif { font-family: 'Instrument Serif', serif; font-style: italic; }
+
+  .landing-sub {
+    font-size: 18px; color: var(--text2); line-height: 1.6; margin-bottom: 48px;
+    animation: fadeInUp 0.7s 0.2s ease both;
+  }
+
+  .auth-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 36px; max-width: 400px; margin: 0 auto;
+    animation: fadeInUp 0.7s 0.3s ease both;
+  }
+  .auth-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .auth-sub { font-size: 13px; color: var(--text2); margin-bottom: 28px; }
+
+  .btn-google {
+    width: 100%; padding: 14px; border-radius: var(--radius-sm);
+    background: #fff; color: #1a1a1a; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all 0.2s; margin-bottom: 16px;
+  }
+  .btn-google:hover { background: #f0f0f0; transform: translateY(-1px); }
+  .btn-google svg { width: 20px; height: 20px; }
+
+  .divider { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider span { font-size: 12px; color: var(--text3); }
+
+  .input-field {
+    width: 100%; padding: 12px 14px; border-radius: var(--radius-sm);
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s; margin-bottom: 10px;
+  }
+  .input-field:focus { border-color: var(--accent); }
+  .input-field::placeholder { color: var(--text3); }
+
+  .btn-primary {
+    width: 100%; padding: 13px; border-radius: var(--radius-sm);
+    background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #4a7bef; transform: translateY(-1px); }
+
+  .trust-row {
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    margin-top: 40px; font-size: 12px; color: var(--text3);
+    animation: fadeInUp 0.7s 0.4s ease both;
+  }
+  .trust-item { display: flex; align-items: center; gap: 5px; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── APP SHELL ── */
+  #app { display: none; min-height: 100vh; }
+
+  .app-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,15,20,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; height: 60px;
+    gap: 12px;
+  }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+    color: var(--accent); margin-right: auto; }
+  .nav-avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent3));
+    display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .city-badge {
+    display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
+    padding: 4px 12px;
+  }
+
+  .app-layout { display: flex; padding-top: 60px; min-height: 100vh; }
+  .sidebar {
+    width: 220px; flex-shrink: 0; background: var(--surface);
+    border-right: 1px solid var(--border); padding: 20px 12px;
+    position: fixed; top: 60px; bottom: 0; overflow-y: auto;
+  }
+  .sidebar-section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text3); padding: 0 10px; margin-bottom: 8px; margin-top: 20px;
+  }
+  .sidebar-section-label:first-child { margin-top: 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+    border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s;
+    font-size: 14px; color: var(--text2); font-weight: 400;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(91,140,255,0.15); color: var(--accent); font-weight: 500; }
+  .nav-item-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-left: auto; background: var(--accent2); color: #fff; font-size: 10px;
+    font-weight: 700; border-radius: 100px; padding: 1px 6px;
+  }
+
+  .main-content { margin-left: 220px; flex: 1; padding: 28px; min-height: calc(100vh - 60px); }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── DASHBOARD ── */
+  .welcome-banner {
+    background: linear-gradient(135deg, rgba(91,140,255,0.15), rgba(67,217,160,0.08));
+    border: 1px solid rgba(91,140,255,0.2); border-radius: 20px;
+    padding: 28px 32px; margin-bottom: 28px; position: relative; overflow: hidden;
+  }
+  .welcome-banner::before {
+    content: ''; position: absolute; right: -20px; top: -20px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(91,140,255,0.1) 0%, transparent 70%);
+  }
+  .welcome-name { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; }
+  .welcome-name span { color: var(--accent); }
+  .welcome-sub { color: var(--text2); font-size: 14px; margin-top: 4px; }
+  .progress-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+  .progress-label { font-size: 13px; color: var(--text2); }
+  .progress-bar {
+    flex: 1; height: 6px; background: var(--surface3); border-radius: 100px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 100px; width: 35%; transition: width 1s ease;
+  }
+  .progress-pct { font-size: 13px; font-weight: 600; color: var(--accent3); }
+
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; cursor: pointer; transition: all 0.2s;
+  }
+  .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .stat-icon { font-size: 28px; margin-bottom: 10px; }
+  .stat-label { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; }
+  .stat-hint { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } .sidebar { display: none; } .main-content { margin-left: 0; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .card-action { font-size: 12px; color: var(--accent); cursor: pointer; }
+
+  .checklist-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--border); cursor: pointer;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border);
+    flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+  }
+  .check-box.done { background: var(--accent3); border-color: var(--accent3); }
+  .check-box.done::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+  .check-label { font-size: 14px; flex: 1; }
+  .check-label.done-label { color: var(--text3); text-decoration: line-through; }
+  .check-badge { font-size: 11px; padding: 2px 8px; border-radius: 100px; font-weight: 500; }
+  .badge-urgent { background: rgba(255,107,107,0.15); color: var(--accent2); }
+  .badge-done { background: rgba(67,217,160,0.12); color: var(--accent3); }
+  .badge-pending { background: rgba(255,209,102,0.12); color: var(--accent4); }
+
+  .event-item {
+    display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-date-box {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 8px 10px; text-align: center; flex-shrink: 0; min-width: 46px;
+  }
+  .event-day { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .event-month { font-size: 10px; color: var(--text3); text-transform: uppercase; }
+  .event-name { font-size: 14px; font-weight: 500; }
+  .event-loc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .event-tag { font-size: 10px; padding: 2px 8px; border-radius: 100px; background: rgba(91,140,255,0.12); color: var(--accent); margin-top: 4px; display: inline-block; }
+
+  /* ── AI CHAT ── */
+  #view-chat { display: flex; flex-direction: column; height: calc(100vh - 60px - 56px); }
+  .chat-area {
+    flex: 1; overflow-y: auto; padding: 20px 0; display: flex; flex-direction: column; gap: 16px;
+  }
+  .chat-bubble {
+    max-width: 72%; padding: 14px 18px; border-radius: 18px; font-size: 14px; line-height: 1.6;
+    animation: bubbleIn 0.25s ease;
+  }
+  @keyframes bubbleIn { from { opacity: 0; transform: scale(0.95) translateY(8px); } to { opacity: 1; transform: none; } }
+  .bubble-user {
+    background: var(--accent); color: #fff;
+    align-self: flex-end; border-bottom-right-radius: 4px;
+  }
+  .bubble-ai {
+    background: var(--surface2); border: 1px solid var(--border);
+    align-self: flex-start; border-bottom-left-radius: 4px;
+  }
+  .bubble-ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .ai-icon { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent3)); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+  .ai-name { font-size: 12px; font-weight: 600; color: var(--accent); }
+  .ai-typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+  .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); animation: typingBounce 1.2s infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+  .chat-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .suggestion-chip {
+    padding: 7px 14px; border-radius: 100px; background: var(--surface);
+    border: 1px solid var(--border); font-size: 13px; cursor: pointer;
+    transition: all 0.15s; color: var(--text2); white-space: nowrap;
+  }
+  .suggestion-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  .chat-input-row {
+    display: flex; gap: 10px; align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 8px 6px 20px;
+  }
+  .chat-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+  }
+  .chat-input::placeholder { color: var(--text3); }
+  .chat-send-btn {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--accent);
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .chat-send-btn:hover { background: #4a7bef; transform: scale(1.05); }
+
+  /* ── PAPERWORK ── */
+  .tabs { display: flex; gap: 4px; background: var(--surface); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 24px; border: 1px solid var(--border); }
+  .tab-btn {
+    flex: 1; padding: 8px; border-radius: 6px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    background: transparent; color: var(--text2); transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--accent); color: #fff; }
+
+  .translate-zone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 40px; text-align: center; margin-bottom: 20px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .translate-zone:hover { border-color: var(--accent); background: rgba(91,140,255,0.04); }
+  .translate-zone-icon { font-size: 36px; margin-bottom: 12px; }
+  .translate-zone-text { font-size: 15px; font-weight: 500; }
+  .translate-zone-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  .doc-result {
+    display: none; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .doc-result.show { display: block; }
+  .doc-result-header {
+    background: var(--surface3); padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-result-title { font-size: 14px; font-weight: 600; }
+  .doc-result-body { padding: 18px; font-size: 14px; line-height: 1.8; }
+  .field-row { display: flex; gap: 16px; margin-bottom: 14px; }
+  .field-box {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+  }
+  .field-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field-value { font-size: 14px; color: var(--text); }
+  .field-value input {
+    background: transparent; border: none; outline: none; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; width: 100%;
+  }
+  .uncertain-text {
+    background: rgba(255,209,102,0.2); border-bottom: 2px solid var(--accent4);
+    padding: 0 2px; cursor: help; position: relative;
+  }
+  .uncertain-badge {
+    display: none; position: absolute; bottom: 120%; left: 0; background: var(--surface3);
+    border: 1px solid var(--accent4); border-radius: 6px; padding: 6px 10px;
+    font-size: 12px; color: var(--accent4); white-space: nowrap; z-index: 10;
+  }
+  .uncertain-text:hover .uncertain-badge { display: block; }
+  .confidence-bar { display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--border); }
+  .confidence-label { font-size: 12px; color: var(--text2); }
+  .confidence-track { flex: 1; height: 4px; background: var(--surface3); border-radius: 100px; overflow: hidden; }
+  .confidence-fill { height: 100%; border-radius: 100px; }
+  .conf-high { background: var(--accent3); width: 92%; }
+  .conf-med { background: var(--accent4); width: 68%; }
+  .warning-box {
+    background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.25);
+    border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px;
+    color: var(--accent2); display: flex; gap: 10px; align-items: flex-start;
+    margin: 16px 18px;
+  }
+  .submit-row { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-outline {
+    padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--text2); color: var(--text); }
+  .btn-sm-primary {
+    padding: 9px 18px; border-radius: var(--radius-sm); border: none;
+    background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-sm-primary:hover { background: #4a7bef; }
+
+  /* ── FOOD FINDER ── */
+  .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+  .filter-pill {
+    padding: 7px 16px; border-radius: 100px; border: 1px solid var(--border);
+    font-size: 13px; cursor: pointer; transition: all 0.2s; color: var(--text2); background: var(--surface);
+  }
+  .filter-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-pill:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+  .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .food-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: all 0.2s; cursor: pointer;
+  }
+  .food-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .food-img {
+    height: 120px; display: flex; align-items: center; justify-content: center;
+    font-size: 52px; background: var(--surface2);
+  }
+  .food-body { padding: 14px; }
+  .food-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .food-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .food-tag { font-size: 10px; padding: 2px 7px; border-radius: 100px; background: var(--surface3); color: var(--text2); }
+  .food-meta { display: flex; align-items: center; justify-content: space-between; }
+  .food-price { font-size: 16px; font-weight: 700; color: var(--accent3); }
+  .food-rating { display: flex; align-items: center; gap: 4px; font-size: 13px; }
+  .food-dist { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  .student-rec { font-size: 11px; color: var(--accent4); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+  /* ── EVENTS ── */
+  .event-filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .events-list { display: flex; flex-direction: column; gap: 14px; }
+  .event-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px; display: flex; gap: 18px; cursor: pointer; transition: all 0.2s;
+  }
+  .event-card:hover { border-color: var(--accent3); }
+  .event-card-date {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 10px 14px; text-align: center; flex-shrink: 0;
+  }
+  .event-card-day { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent3); line-height: 1; }
+  .event-card-month { font-size: 11px; color: var(--text3); text-transform: uppercase; }
+  .event-card-info { flex: 1; }
+  .event-card-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .event-card-meta { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+  .event-card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .event-card-tag { font-size: 11px; padding: 3px 10px; border-radius: 100px; }
+  .tag-calm { background: rgba(67,217,160,0.12); color: var(--accent3); }
+  .tag-free { background: rgba(255,209,102,0.12); color: var(--accent4); }
+  .tag-social { background: rgba(91,140,255,0.12); color: var(--accent); }
+  .tag-culture { background: rgba(255,107,107,0.1); color: var(--accent2); }
+  .event-card-action { display: flex; align-items: center; }
+  .btn-add-cal {
+    padding: 8px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: transparent; font-size: 12px; font-weight: 500; cursor: pointer;
+    color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-add-cal:hover, .btn-add-cal.added { background: var(--accent3); border-color: var(--accent3); color: #fff; }
+
+  /* ── TRANSIT ── */
+  .transit-search {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; margin-bottom: 20px;
+  }
+  .transit-row { display: flex; gap: 10px; align-items: flex-end; }
+  .transit-input-wrap { flex: 1; }
+  .transit-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .route-result { display: none; }
+  .route-result.show { display: block; }
+  .route-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .route-header { padding: 16px 18px; background: var(--surface2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .route-time { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+  .route-duration { font-size: 13px; color: var(--text2); }
+  .route-price { font-size: 16px; font-weight: 700; color: var(--accent3); }
+  .route-steps { padding: 16px 18px; }
+  .route-step {
+    display: flex; gap: 14px; align-items: flex-start; padding: 8px 0;
+    position: relative;
+  }
+  .route-step:not(:last-child)::after {
+    content: ''; position: absolute; left: 15px; top: 36px; bottom: -8px; width: 2px;
+    background: var(--border);
+  }
+  .route-step-dot {
+    width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--surface3);
+  }
+  .route-step-text { font-size: 14px; padding-top: 5px; }
+  .route-step-note { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .discount-tip {
+    margin: 0 18px 16px; background: rgba(91,140,255,0.08);
+    border: 1px solid rgba(91,140,255,0.2); border-radius: var(--radius-sm);
+    padding: 12px 14px; font-size: 13px;
+  }
+  .discount-tip strong { color: var(--accent); }
+
+  /* ── CALENDAR ── */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 24px; }
+  .cal-day-name { text-align: center; font-size: 11px; color: var(--text3); padding: 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+  .cal-cell {
+    aspect-ratio: 1; border-radius: var(--radius-sm); display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start; padding: 5px 2px; cursor: pointer;
+    transition: all 0.15s; position: relative; font-size: 13px;
+  }
+  .cal-cell:hover { background: var(--surface2); }
+  .cal-cell.today { background: rgba(91,140,255,0.15); color: var(--accent); font-weight: 700; }
+  .cal-cell.has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background: var(--accent3); }
+  .cal-cell.has-deadline::after { background: var(--accent2); }
+  .cal-cell.empty { opacity: 0; pointer-events: none; }
+  .upcoming-list { display: flex; flex-direction: column; gap: 10px; }
+  .upcoming-item {
+    display: flex; align-items: center; gap: 14px; padding: 12px 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  }
+  .upcoming-color { width: 4px; height: 40px; border-radius: 2px; flex-shrink: 0; }
+  .upcoming-title { font-size: 14px; font-weight: 500; }
+  .upcoming-date { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 28px; max-width: 440px; width: 90%; animation: fadeInUp 0.25s ease;
+  }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+  .modal-sub { font-size: 14px; color: var(--text2); margin-bottom: 20px; }
+  .modal-close { float: right; cursor: pointer; color: var(--text3); font-size: 20px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 300;
+    background: var(--surface3); border: 1px solid var(--accent3);
+    border-radius: var(--radius); padding: 14px 18px; font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+    transform: translateX(120%); transition: transform 0.3s ease;
+    max-width: 320px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-icon { font-size: 18px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LANDING PAGE ══════════════════ -->
+<div id="landing">
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+
+  <div class="landing-content">
+    <div class="pill-badge"><span class="dot-pulse"></span> AI-powered exchange companion</div>
+    <h1 class="landing-h1">
+      Your <span class="serif">abroad</span> life,<br>
+      <em>finally</em> easy.
+    </h1>
+    <p class="landing-sub">
+      Translate paperwork, find food, navigate transit, discover events —
+      all in one place. Built for exchange students, by understanding them.
+    </p>
+
+    <div class="auth-card">
+      <div class="auth-title">Get started</div>
+      <div class="auth-sub">Sign in to your companion</div>
+
+      <button class="btn-google" onclick="loginWithGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+
+      <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
+
+      <input class="input-field" type="email" placeholder="Email address" id="login-email">
+      <input class="input-field" type="password" placeholder="Password" id="login-pass">
+      <button class="btn-primary" onclick="loginEmail()">Sign in / Create account</button>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item">🔒 Private & secure</div>
+      <div class="trust-item">🌍 16 languages</div>
+      <div class="trust-item">✈️ 50+ cities</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ APP ══════════════════ -->
+<div id="app">
+  <nav class="app-nav">
+    <div class="nav-logo">ExchangeCompanion</div>
+    <div class="city-badge">📍 <span id="nav-city">Bratislava, SK</span></div>
+    <div class="nav-avatar" id="user-avatar">A</div>
+  </nav>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section-label">Overview</div>
+      <div class="nav-item active" onclick="switchView('dashboard', this)">
+        <span class="nav-item-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="switchView('chat', this)">
+        <span class="nav-item-icon">🤖</span> AI Assistant
+        <span class="nav-badge">AI</span>
+      </div>
+
+      <div class="sidebar-section-label">My Life</div>
+      <div class="nav-item" onclick="switchView('paperwork', this)">
+        <span class="nav-item-icon">📄</span> Paperwork
+      </div>
+      <div class="nav-item" onclick="switchView('food', this)">
+        <span class="nav-item-icon">🍜</span> Food Finder
+      </div>
+      <div class="nav-item" onclick="switchView('events', this)">
+        <span class="nav-item-icon">🎉</span> Events
+      </div>
+      <div class="nav-item" onclick="switchView('transit', this)">
+        <span class="nav-item-icon">🚌</span> Transit
+      </div>
+      <div class="nav-item" onclick="switchView('calendar', this)">
+        <span class="nav-item-icon">📅</span> Calendar
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <div class="welcome-banner">
+          <div class="welcome-name">Welcome back, <span id="user-name-display">Alex</span> 👋</div>
+          <div class="welcome-sub">Day 3 in Bratislava · You're doing great!</div>
+          <div class="progress-row">
+            <div class="progress-label">Onboarding progress</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="progress-pct">35%</div>
+          </div>
+        </div>
+
+        <div class="cards-grid">
+          <div class="stat-card" onclick="switchView('paperwork', document.querySelector('[onclick*=paperwork]'))">
+            <div class="stat-icon">📄</div>
+            <div class="stat-label">Documents</div>
+            <div class="stat-value">2/5</div>
+            <div class="stat-hint">3 pending translation</div>
+          </div>
+          <div class="stat-card" onclick="switchView('events', document.querySelector('[onclick*=events]'))">
+            <div class="stat-icon">🎉</div>
+            <div class="stat-label">Events this week</div>
+            <div class="stat-value">4</div>
+            <div class="stat-hint">1 added to calendar</div>
+          </div>
+          <div class="stat-card" onclick="switchView('food', document.querySelector('[onclick*=food]'))">
+            <div class="stat-icon">🍜</div>
+            <div class="stat-label">Saved restaurants</div>
+            <div class="stat-value">7</div>
+            <div class="stat-hint">Near your dorm</div>
+          </div>
+          <div class="stat-card" onclick="switchView('chat', document.querySelector('[onclick*=chat]'))">
+            <div class="stat-icon">🤖</div>
+            <div class="stat-label">AI Conversations</div>
+            <div class="stat-value">12</div>
+            <div class="stat-hint">Ask anything</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 Day-1 Checklist</div>
+              <div class="card-action" onclick="switchView('paperwork', document.querySelector('[onclick*=paperwork]'))">View all →</div>
+            </div>
+            <div id="checklist-container">
+              <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="check-box done"></div>
+                <div class="check-label done-label">Pick up keys from reception</div>
+                <span class="check-badge badge-done">Done</span>
+              </div>
+              <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="check-box done"></div>
+                <div class="check-label done-label">Register WiFi in dorm portal</div>
+                <span class="check-badge badge-done">Done</span>
+              </div>
+              <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-label">Submit dormitory registration form</div>
+                <span class="check-badge badge-urgent">Urgent</span>
+              </div>
+              <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-label">Get student ID card</div>
+                <span class="check-badge badge-pending">Pending</span>
+              </div>
+              <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <div class="check-label">Attend university orientation</div>
+                <span class="check-badge badge-pending">Mar 12</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🗓 Upcoming Events</div>
+              <div class="card-action" onclick="switchView('events', document.querySelector('[onclick*=events]'))">See all →</div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box"><div class="event-day">11</div><div class="event-month">Mar</div></div>
+              <div>
+                <div class="event-name">Old Town Walking Tour</div>
+                <div class="event-loc">📍 Hlavné námestie · Free</div>
+                <span class="event-tag">🌿 Calm</span>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box"><div class="event-day">13</div><div class="event-month">Mar</div></div>
+              <div>
+                <div class="event-name">ESN International Night</div>
+                <div class="event-loc">📍 KC Dunaj · €3</div>
+                <span class="event-tag">🌍 Social</span>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box"><div class="event-day">15</div><div class="event-month">Mar</div></div>
+              <div>
+                <div class="event-name">Slovak Language Workshop</div>
+                <div class="event-loc">📍 STU Campus · Free</div>
+                <span class="event-tag">📚 Culture</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI CHAT -->
+      <div class="view" id="view-chat" style="display:none;flex-direction:column;">
+        <div class="chat-area" id="chat-area">
+          <div class="chat-bubble bubble-ai">
+            <div class="bubble-ai-header"><div class="ai-icon">✦</div><div class="ai-name">ExchangeAI</div></div>
+            Hey Alex! 👋 I'm your personal exchange companion. I can help you with paperwork, find food, navigate Bratislava, discover events, and much more.<br><br>
+            What do you need help with today?
+          </div>
+        </div>
+        <div class="chat-suggestions">
+          <div class="suggestion-chip" onclick="sendSuggestion('How do I get to campus from ŠD Mladá garda?')">🚌 How do I get to campus?</div>
+          <div class="suggestion-chip" onclick="sendSuggestion('Find me cheap food near my dorm')">🍜 Cheap food near me</div>
+          <div class="suggestion-chip" onclick="sendSuggestion('What do I need to complete my dormitory registration?')">📄 Dorm registration help</div>
+          <div class="suggestion-chip" onclick="sendSuggestion('Any calm events this weekend in Bratislava?')">🎉 Weekend events</div>
+          <div class="suggestion-chip" onclick="sendSuggestion('How do I get a student transport card in Bratislava?')">🎫 Student transit card</div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-input" placeholder="Ask me anything about life in Bratislava…" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="chat-send-btn" onclick="sendChat()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- PAPERWORK -->
+      <div class="view" id="view-paperwork" style="display:none;">
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">📄 Paperwork Assistant</h2>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:24px;">Upload official documents — I'll translate them and help you fill them out correctly.</p>
+
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'tab-translate')">Translate Document</button>
+          <button class="tab-btn" onclick="switchTab(this,'tab-dorm')">Dorm Registration</button>
+          <button class="tab-btn" onclick="switchTab(this,'tab-docs')">My Documents</button>
+        </div>
+
+        <div id="tab-translate">
+          <div class="translate-zone" onclick="simulateTranslate()">
+            <div class="translate-zone-icon">📁</div>
+            <div class="translate-zone-text">Click to upload a document</div>
+            <div class="translate-zone-sub">PDF, JPG, PNG — I'll translate it instantly</div>
+          </div>
+
+          <div class="doc-result" id="doc-result">
+            <div class="doc-result-header">
+              <div>
+                <div class="doc-result-title">🏠 Dormitory Registration Form — STU Bratislava</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:2px;">Translated from Slovak · Confidence: 94%</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-outline" onclick="showToast('📋 Copied to clipboard!')">Copy</button>
+              </div>
+            </div>
+            <div class="doc-result-body">
+              <p style="margin-bottom:14px;color:var(--text2);font-size:13px;">Fill in the fields below. Highlighted sections have uncertainty — hover to see notes.</p>
+              <div class="field-row">
+                <div class="field-box">
+                  <div class="field-label">Full Name (as in passport)</div>
+                  <div class="field-value"><input placeholder="e.g. Alex Johnson"></div>
+                </div>
+                <div class="field-box">
+                  <div class="field-label">Date of Birth</div>
+                  <div class="field-value"><input type="date"></div>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-box">
+                  <div class="field-label">Passport / ID Number</div>
+                  <div class="field-value"><input placeholder="e.g. AB123456"></div>
+                </div>
+                <div class="field-box">
+                  <div class="field-label">Home University</div>
+                  <div class="field-value"><input placeholder="e.g. University of Paris"></div>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-box" style="flex:2;">
+                  <div class="field-label">Arrival Date</div>
+                  <div class="field-value"><input type="date"></div>
+                </div>
+              </div>
+              <p style="font-size:14px;line-height:1.8;color:var(--text);">
+                The student agrees to comply with all dormitory regulations, including quiet hours from 22:00 to 07:00.
+                A <span class="uncertain-text" style="position:relative;">kaučionný poplatok<span class="uncertain-badge">⚠️ Uncertain: likely means "security deposit" — please verify with administration</span></span>
+                of €50 is required upon check-in, refundable upon departure pending a room inspection.
+              </p>
+            </div>
+            <div class="confidence-bar">
+              <span class="confidence-label">Translation confidence</span>
+              <div class="confidence-track"><div class="confidence-fill conf-high"></div></div>
+              <span style="font-size:12px;color:var(--accent3);font-weight:600;">94%</span>
+            </div>
+            <div class="warning-box">
+              ⚠️ This translation is an AI aid only. The original Slovak document is legally binding. When in doubt, contact the dormitory administration directly.
+            </div>
+            <div class="submit-row">
+              <button class="btn-outline">Contact Admin</button>
+              <button class="btn-sm-primary" onclick="showToast('✅ Form saved! Remember to print and sign.')">Save & Print</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-dorm" style="display:none;">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px;">📋 Dorm Check-in Checklist</div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box done"></div>
+              <div class="check-label done-label">Present acceptance letter at reception</div>
+              <span class="check-badge badge-done">Done</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box done"></div>
+              <div class="check-label done-label">Pay first month's rent (cash or card)</div>
+              <span class="check-badge badge-done">Done</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div class="check-label">Sign dormitory contract (in Slovak — use translator)</div>
+              <span class="check-badge badge-urgent">Urgent</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div class="check-label">Pay €50 security deposit (kaučionný poplatok)</div>
+              <span class="check-badge badge-urgent">Urgent</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div class="check-label">Submit photo for student ID card at study office</div>
+              <span class="check-badge badge-pending">Pending</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div class="check-label">Register for ISIC (International Student ID Card)</div>
+              <span class="check-badge badge-pending">Optional</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-docs" style="display:none;">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px;">📂 My Documents</div>
+            <p style="color:var(--text2);font-size:14px;">All your translated documents are stored here securely.</p>
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);">
+                <div style="font-size:24px;">📄</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:500;">Dormitory Registration Form</div><div style="font-size:12px;color:var(--text2);">Translated · Mar 9, 2026</div></div>
+                <span class="check-badge badge-done">Complete</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);">
+                <div style="font-size:24px;">🏥</div>
+                <div style="flex:1;"><div style="font-size:14px;font-weight:500;">European Health Insurance Card</div><div style="font-size:12px;color:var(--text2);">Upload needed</div></div>
+                <span class="check-badge badge-urgent">Missing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOD FINDER -->
+      <div class="view" id="view-food" style="display:none;">
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">🍜 Food Finder</h2>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:24px;">Real recommendations from exchange students — not just Google Maps ratings.</p>
+
+        <div class="filter-row">
+          <div class="filter-pill active" onclick="filterFood(this,'all')">All</div>
+          <div class="filter-pill" onclick="filterFood(this,'budget')">💸 Under €5</div>
+          <div class="filter-pill" onclick="filterFood(this,'vegetarian')">🥗 Vegetarian</div>
+          <div class="filter-pill" onclick="filterFood(this,'quick')">⚡ Quick</div>
+          <div class="filter-pill" onclick="filterFood(this,'nearby')">📍 Nearest</div>
+          <div class="filter-pill" onclick="filterFood(this,'studentrec')">⭐ Student picks</div>
+        </div>
+
+        <div class="food-grid" id="food-grid">
+          <div class="food-card" data-tags="budget quick studentrec nearby">
+            <div class="food-img">🥙</div>
+            <div class="food-body">
+              <div class="food-name">Kebab u Stanislava</div>
+              <div class="food-tags"><span class="food-tag">Slovak</span><span class="food-tag">Fast food</span><span class="food-tag">Cash only</span></div>
+              <div class="food-meta"><div class="food-price">€3.50</div><div class="food-rating">⭐ 4.2 <span style="color:var(--text3);font-size:11px;">(student rated)</span></div></div>
+              <div class="food-dist">📍 280m from your dorm</div>
+              <div class="student-rec">👥 "Best value near campus — massive portions!"</div>
+            </div>
+          </div>
+          <div class="food-card" data-tags="budget vegetarian studentrec">
+            <div class="food-img">🥗</div>
+            <div class="food-body">
+              <div class="food-name">Veglife Bistro</div>
+              <div class="food-tags"><span class="food-tag">Vegetarian</span><span class="food-tag">Vegan options</span></div>
+              <div class="food-meta"><div class="food-price">€4.80</div><div class="food-rating">⭐ 4.5 <span style="color:var(--text3);font-size:11px;">(student rated)</span></div></div>
+              <div class="food-dist">📍 450m from your dorm</div>
+              <div class="student-rec">👥 "Daily specials, always fresh!"</div>
+            </div>
+          </div>
+          <div class="food-card" data-tags="budget quick nearby">
+            <div class="food-img">🍕</div>
+            <div class="food-body">
+              <div class="food-name">Pizza &amp; Pasta Mlynská</div>
+              <div class="food-tags"><span class="food-tag">Italian</span><span class="food-tag">Delivery</span></div>
+              <div class="food-meta"><div class="food-price">€5.50</div><div class="food-rating">⭐ 4.0 <span style="color:var(--text3);font-size:11px;">(student rated)</span></div></div>
+              <div class="food-dist">📍 600m from your dorm</div>
+              <div class="student-rec">👥 "Huge slices, open late"</div>
+            </div>
+          </div>
+          <div class="food-card" data-tags="studentrec vegetarian">
+            <div class="food-img">🍲</div>
+            <div class="food-body">
+              <div class="food-name">Jedáleň STU (University Canteen)</div>
+              <div class="food-tags"><span class="food-tag">Canteen</span><span class="food-tag">Student discount</span></div>
+              <div class="food-meta"><div class="food-price">€2.90</div><div class="food-rating">⭐ 3.8 <span style="color:var(--text3);font-size:11px;">(student rated)</span></div></div>
+              <div class="food-dist">📍 On campus · show student ID!</div>
+              <div class="student-rec">👥 "Cheapest hot meal on campus"</div>
+            </div>
+          </div>
+          <div class="food-card" data-tags="budget quick nearby">
+            <div class="food-img">🥐</div>
+            <div class="food-body">
+              <div class="food-name">Pekáreň Richtár</div>
+              <div class="food-tags"><span class="food-tag">Bakery</span><span class="food-tag">Breakfast</span></div>
+              <div class="food-meta"><div class="food-price">€1.20</div><div class="food-rating">⭐ 4.6 <span style="color:var(--text3);font-size:11px;">(student rated)</span></div></div>
+              <div class="food-dist">📍 150m from your dorm</div>
+              <div class="student-rec">👥 "Best burek in the neighbourhood!"</div>
+            </div>
+          </div>
+          <div class="food-card" data-tags="studentrec">
+            <div class="food-img">🍜</div>
+            <div class="food-body">
+              <div class="food-name">Pho House Bratislava</div>
+              <div class="food-tags"><span class="food-tag">Vietnamese</span><span class="food-tag">Soup</span></div>
+              <div class="food-meta"><div class="food-price">€6.50</div><div class="food-rating">⭐ 4.7 <span style="color:var(--text3);font-size:11px;">(student rated)</span></div></div>
+              <div class="food-dist">📍 1.2km · 15 min walk</div>
+              <div class="student-rec">👥 "Worth the walk — huge bowls!"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS -->
+      <div class="view" id="view-events" style="display:none;">
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">🎉 Events</h2>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:24px;">Curated events for exchange students — translated, filtered, and added to your calendar.</p>
+
+        <div class="event-filters">
+          <div class="filter-pill active" onclick="filterPill(this)">All</div>
+          <div class="filter-pill" onclick="filterPill(this)">🌿 Calm</div>
+          <div class="filter-pill" onclick="filterPill(this)">💸 Free</div>
+          <div class="filter-pill" onclick="filterPill(this)">🌍 Social</div>
+          <div class="filter-pill" onclick="filterPill(this)">📚 Culture</div>
+          <div class="filter-pill" onclick="filterPill(this)">🎵 Music</div>
+        </div>
+
+        <div class="events-list">
+          <div class="event-card">
+            <div class="event-card-date"><div class="event-card-day">11</div><div class="event-card-month">MAR</div></div>
+            <div class="event-card-info">
+              <div class="event-card-name">Old Town Walking Tour</div>
+              <div class="event-card-meta">📍 Hlavné námestie · 10:00 · Free</div>
+              <div class="event-card-tags">
+                <span class="event-card-tag tag-calm">🌿 Calm</span>
+                <span class="event-card-tag tag-free">💸 Free</span>
+                <span class="event-card-tag tag-social">🌍 Social</span>
+              </div>
+            </div>
+            <div class="event-card-action">
+              <button class="btn-add-cal" onclick="addToCalendar(this)">+ Calendar</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-card-date"><div class="event-card-day">12</div><div class="event-card-month">MAR</div></div>
+            <div class="event-card-info">
+              <div class="event-card-name">University Orientation Day</div>
+              <div class="event-card-meta">📍 STU Aula · 09:00 · Free · <strong style="color:var(--accent2);">MANDATORY</strong></div>
+              <div class="event-card-tags">
+                <span class="event-card-tag tag-culture">📚 Academic</span>
+              </div>
+            </div>
+            <div class="event-card-action">
+              <button class="btn-add-cal added" onclick="addToCalendar(this)">✓ Added</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-card-date"><div class="event-card-day">13</div><div class="event-card-month">MAR</div></div>
+            <div class="event-card-info">
+              <div class="event-card-name">ESN International Night</div>
+              <div class="event-card-meta">📍 KC Dunaj · 19:00 · €3 entry</div>
+              <div class="event-card-tags">
+                <span class="event-card-tag tag-social">🌍 Social</span>
+              </div>
+            </div>
+            <div class="event-card-action">
+              <button class="btn-add-cal" onclick="addToCalendar(this)">+ Calendar</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-card-date"><div class="event-card-day">15</div><div class="event-card-month">MAR</div></div>
+            <div class="event-card-info">
+              <div class="event-card-name">Slovak Language Intro Workshop</div>
+              <div class="event-card-meta">📍 STU Campus Room B204 · 15:00 · Free</div>
+              <div class="event-card-tags">
+                <span class="event-card-tag tag-culture">📚 Culture</span>
+                <span class="event-card-tag tag-calm">🌿 Calm</span>
+                <span class="event-card-tag tag-free">💸 Free</span>
+              </div>
+            </div>
+            <div class="event-card-action">
+              <button class="btn-add-cal" onclick="addToCalendar(this)">+ Calendar</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-card-date"><div class="event-card-day">16</div><div class="event-card-month">MAR</div></div>
+            <div class="event-card-info">
+              <div class="event-card-name">Bratislava Castle Sunset Hike</div>
+              <div class="event-card-meta">📍 Meet at Hviezdoslavovo námestie · 17:00 · Free</div>
+              <div class="event-card-tags">
+                <span class="event-card-tag tag-calm">🌿 Calm</span>
+                <span class="event-card-tag tag-free">💸 Free</span>
+                <span class="event-card-tag tag-culture">📸 Sightseeing</span>
+              </div>
+            </div>
+            <div class="event-card-action">
+              <button class="btn-add-cal" onclick="addToCalendar(this)">+ Calendar</button>
+            </div>
+          </div>
+          <div class="event-card">
+            <div class="event-card-date"><div class="event-card-day">20</div><div class="event-card-month">MAR</div></div>
+            <div class="event-card-info">
+              <div class="event-card-name">Board Games & Coffee Night</div>
+              <div class="event-card-meta">📍 Café Wakat · 18:00 · €2 (drink included)</div>
+              <div class="event-card-tags">
+                <span class="event-card-tag tag-calm">🌿 Calm</span>
+                <span class="event-card-tag tag-social">🌍 Social</span>
+              </div>
+            </div>
+            <div class="event-card-action">
+              <button class="btn-add-cal" onclick="addToCalendar(this)">+ Calendar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSIT -->
+      <div class="view" id="view-transit" style="display:none;">
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">🚌 Transit Guide</h2>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:24px;">Navigate Bratislava public transport with student discounts explained.</p>
+
+        <div class="transit-search">
+          <div class="transit-row">
+            <div class="transit-input-wrap">
+              <div class="transit-label">From</div>
+              <input class="input-field" id="transit-from" placeholder="e.g. ŠD Mladá garda (dorm)" value="ŠD Mladá garda">
+            </div>
+            <div style="padding-bottom:10px;color:var(--text3);font-size:20px;">→</div>
+            <div class="transit-input-wrap">
+              <div class="transit-label">To</div>
+              <input class="input-field" id="transit-to" placeholder="e.g. STU Main Campus">
+            </div>
+            <div style="padding-bottom:10px;">
+              <button class="btn-sm-primary" onclick="findRoute()" style="white-space:nowrap;">Find Route</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-result" id="route-result">
+          <div class="route-card">
+            <div class="route-header">
+              <div>
+                <div class="route-time">08:14 → 08:31</div>
+                <div class="route-duration">17 minutes · Tram + Walk</div>
+              </div>
+              <div class="route-price">€0.70 <span style="font-size:11px;color:var(--text2);">with student card</span></div>
+            </div>
+            <div class="route-steps">
+              <div class="route-step">
+                <div class="route-step-dot">🚶</div>
+                <div><div class="route-step-text">Walk 3 min to Račianska zastávka</div><div class="route-step-note">Exit dorm, turn left on Račianska ulica</div></div>
+              </div>
+              <div class="route-step">
+                <div class="route-step-dot">🚃</div>
+                <div><div class="route-step-text">Tram No. 4 direction Dúbravka — 4 stops</div><div class="route-step-note">Get off at Partizánska — 9 min ride</div></div>
+              </div>
+              <div class="route-step">
+                <div class="route-step-dot">🚶</div>
+                <div><div class="route-step-text">Walk 5 min to STU Main Building</div><div class="route-step-note">Cross at Nám. slobody, building on your right</div></div>
+              </div>
+              <div class="route-step">
+                <div class="route-step-dot">✅</div>
+                <div><div class="route-step-text">Arrived at STU Main Campus</div></div>
+              </div>
+            </div>
+            <div class="discount-tip">
+              💡 <strong>Student discount tip:</strong> You need a <em>preukaz študenta</em> (student card) to pay the discounted €0.70 fare instead of €1.10. Get yours at any DPB ticket office — bring your acceptance letter and passport!
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
+            <div class="card-title" style="margin-bottom:14px;">🎫 How to Get Your Student Card</div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text2);">
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;min-width:20px;">1.</span> Get your official study confirmation letter from STU student office (study dept., 1st floor)</div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;min-width:20px;">2.</span> Go to any DPB (Dopravný podnik Bratislava) office — nearest is at Hlavná stanica (main train station)</div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;min-width:20px;">3.</span> Bring: passport, confirmation letter, 1 passport photo, €3.50 fee</div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--accent);font-weight:700;min-width:20px;">4.</span> Card valid for the semester — keep it with you on every journey!</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="transit-placeholder" class="card" style="text-align:center;padding:40px;">
+          <div style="font-size:48px;margin-bottom:12px;">🗺</div>
+          <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Enter your destination above</div>
+          <div style="font-size:13px;color:var(--text2);">I'll find the best route with student fare info</div>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="view" id="view-calendar" style="display:none;">
+        <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;">📅 My Calendar</h2>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:24px;">All your deadlines, events, and classes in one place — automatically synced.</p>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">March 2026</div>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </div>
+
+          <div>
+            <div class="card-title" style="margin-bottom:16px;">Upcoming</div>
+            <div class="upcoming-list">
+              <div class="upcoming-item">
+                <div class="upcoming-color" style="background:var(--accent2);"></div>
+                <div><div class="upcoming-title">📄 Dorm contract signing deadline</div><div class="upcoming-date">Mar 10 · URGENT</div></div>
+              </div>
+              <div class="upcoming-item">
+                <div class="upcoming-color" style="background:var(--accent);"></div>
+                <div><div class="upcoming-title">🏛 University Orientation Day</div><div class="upcoming-date">Mar 12 · 09:00 · STU Aula</div></div>
+              </div>
+              <div class="upcoming-item">
+                <div class="upcoming-color" style="background:var(--accent3);"></div>
+                <div><div class="upcoming-title">📚 Slovak Language Workshop</div><div class="upcoming-date">Mar 15 · 15:00 · Room B204</div></div>
+              </div>
+              <div class="upcoming-item">
+                <div class="upcoming-color" style="background:var(--accent4);"></div>
+                <div><div class="upcoming-title">🎉 Board Games & Coffee Night</div><div class="upcoming-date">Mar 20 · 18:00 · Café Wakat</div></div>
+              </div>
+              <div class="upcoming-item">
+                <div class="upcoming-color" style="background:var(--accent2);"></div>
+                <div><div class="upcoming-title">📝 Learning Agreement submission deadline</div><div class="upcoming-date">Mar 25 · STU International Office</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL (login confirm) -->
+<div class="modal-overlay" id="city-modal">
+  <div class="modal">
+    <span class="modal-close" onclick="document.getElementById('city-modal').classList.remove('show')">✕</span>
+    <div class="modal-title">🌍 Where are you studying?</div>
+    <div class="modal-sub">I'll personalise everything for your city.</div>
+    <input class="input-field" id="city-input" placeholder="e.g. Bratislava, Prague, Warsaw…" value="Bratislava">
+    <button class="btn-primary" onclick="setCity()">Let's go →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon">✅</span><span id="toast-msg">Done!</span></div>
+
+<script>
+// ── STATE ──
+let userName = 'Alex';
+let userCity = 'Bratislava, SK';
+let checkedCount = 2;
+
+// ── AI RESPONSES ──
+const aiResponses = {
+  default: (q) => {
+    q = q.toLowerCase();
+    if (q.includes('campus') || q.includes('get to') || q.includes('transport') || q.includes('tram')) {
+      return `🚃 **Getting to STU Campus from your dorm:**\n\n1. Walk 3 min to Račianska zastávka\n2. Take **Tram No. 4** (direction Dúbravka) — ride 4 stops\n3. Get off at **Partizánska**\n4. Walk 5 min — total trip ~17 minutes\n\n💳 **Cost:** €0.70 with student card (regular €1.10)\n\n⚠️ Don't have a student card yet? Go to the DPB office at Hlavná stanica with your passport + acceptance letter!`;
+    }
+    if (q.includes('food') || q.includes('eat') || q.includes('cheap') || q.includes('restaurant')) {
+      return `🍜 **Cheap eats near your dorm:**\n\n• **Pekáreň Richtár** — 150m away, burek from €1.20 🥐\n• **Kebab u Stanislava** — 280m, massive portions for €3.50 🥙\n• **STU Canteen (Jedáleň)** — cheapest hot meal on campus, €2.90 with student ID 🍲\n\n⭐ All rated by other exchange students — not just generic Google Maps!`;
+    }
+    if (q.includes('dorm') || q.includes('registration') || q.includes('paperwork') || q.includes('document')) {
+      return `📄 **Dormitory registration — what you need:**\n\n1. **Sign the dormitory contract** (it's in Slovak — use the Paperwork tab to translate it)\n2. **Pay €50 security deposit** (*kaučionný poplatok*) — cash at reception\n3. **Submit your passport copy** to the office on floor 1\n\n⚠️ Deadline is usually within the first week! If anything is unclear in the Slovak forms, head to the **Paperwork** section and upload the document — I'll translate it for you.`;
+    }
+    if (q.includes('event') || q.includes('weekend') || q.includes('calm') || q.includes('social') || q.includes('meet')) {
+      return `🎉 **Calm events this week in Bratislava:**\n\n• **Mar 11** — Old Town Walking Tour, Hlavné námestie, 10:00, Free 🏛\n• **Mar 15** — Slovak Language Workshop, STU campus, Free 📚\n• **Mar 16** — Bratislava Castle Sunset Hike, meet at Hviezdoslavovo nám., Free 🏰\n• **Mar 20** — Board Games & Coffee Night, Café Wakat, €2 🎲\n\nNo loud parties — all calm, social events! Want me to add any to your calendar?`;
+    }
+    if (q.includes('student card') || q.includes('transit card') || q.includes('preukaz') || q.includes('ticket')) {
+      return `🎫 **Getting your Bratislava student transit card:**\n\n1. Get a **study confirmation letter** from STU student office (ground floor)\n2. Go to **DPB office at Hlavná stanica** (main train station)\n3. Bring: **passport + confirmation letter + 1 passport photo + €3.50**\n4. Done! Card gives you 50% discount on all trams, buses, trolleys\n\n⏰ Office hours: Mon–Fri 8:00–18:00`;
+    }
+    if (q.includes('health') || q.includes('doctor') || q.includes('sick') || q.includes('hospital')) {
+      return `🏥 **Healthcare in Bratislava as an exchange student:**\n\nYou're covered by your **European Health Insurance Card (EHIC)**. For non-EU students, check your exchange program insurance.\n\n• **General GP:** Polyklinika Ružinov — bring EHIC + passport\n• **Emergency:** Urgentná ambulancia, Antolská 11 (open 24/7)\n• **Pharmacy:** Lekáreň (green cross sign) — many are open until 22:00\n\n⚠️ Some Slovak GPs may refuse non-emergency cases — if this happens, try the polyclinic and explicitly mention you're an Erasmus student.`;
+    }
+    if (q.includes('hello') || q.includes('hi') || q.includes('hey')) {
+      return `Hey ${userName}! 👋 Great to hear from you. What's on your mind today? I can help with transit, food, paperwork, events, or just about anything else for life in ${userCity.split(',')[0]}!`;
+    }
+    return `That's a great question about "${q.slice(0,40)}..."! \n\nAs your Bratislava companion, I can help with:\n• 🚌 **Transit** — routes, student discounts, tram maps\n• 🍜 **Food** — budget-friendly spots near you\n• 📄 **Paperwork** — translating Slovak documents\n• 🎉 **Events** — calm & social activities\n• 🏥 **Health** — finding doctors, using EHIC\n\nTry asking something more specific and I'll do my best!`;
+  }
+};
+
+// ── AUTH ──
+function loginWithGoogle() {
+  showLanding(false);
+  userName = 'Alex';
+  document.getElementById('user-avatar').textContent = 'A';
+  document.getElementById('user-name-display').textContent = userName;
+  document.getElementById('city-modal').classList.add('show');
+}
+
+function loginEmail() {
+  const email = document.getElementById('login-email').value;
+  if (!email) { showToast('⚠️ Please enter your email address'); return; }
+  userName = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
+  document.getElementById('user-avatar').textContent = userName[0].toUpperCase();
+  document.getElementById('user-name-display').textContent = userName;
+  showLanding(false);
+  document.getElementById('city-modal').classList.add('show');
+}
+
+function showLanding(show) {
+  document.getElementById('landing').style.display = show ? 'flex' : 'none';
+  document.getElementById('app').style.display = show ? 'none' : 'block';
+}
+
+function setCity() {
+  const city = document.getElementById('city-input').value || 'Bratislava';
+  userCity = city + (city.includes(',') ? '' : ', SK');
+  document.getElementById('nav-city').textContent = userCity;
+  document.getElementById('city-modal').classList.remove('show');
+  showToast('🎉 Welcome to ' + city + '! Your companion is ready.');
+  setTimeout(() => animateProgress(), 500);
+}
+
+// ── NAVIGATION ──
+function switchView(viewId, el) {
+  document.querySelectorAll('.view').forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const view = document.getElementById('view-' + viewId);
+  if (view) {
+    if (viewId === 'chat') { view.style.display = 'flex'; }
+    else { view.style.display = 'block'; view.classList.add('active'); }
+  }
+  if (el) el.classList.add('active');
+  // init special views
+  if (viewId === 'calendar') buildCalendar();
+}
+
+// ── CHECKLIST ──
+function toggleCheck(item) {
+  const box = item.querySelector('.check-box');
+  const label = item.querySelector('.check-label');
+  const badge = item.querySelector('.check-badge');
+  const done = box.classList.toggle('done');
+  label.classList.toggle('done-label', done);
+  if (done) { badge.className = 'check-badge badge-done'; badge.textContent = 'Done'; checkedCount++; }
+  else { badge.className = 'check-badge badge-pending'; badge.textContent = 'Pending'; checkedCount = Math.max(0, checkedCount - 1); }
+  const total = document.querySelectorAll('.checklist-item').length;
+  const pct = Math.round((checkedCount / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.querySelector('.progress-pct').textContent = pct + '%';
+  if (done) showToast('✅ Task marked as done!');
+}
+
+function animateProgress() {
+  const fill = document.getElementById('progress-fill');
+  if (fill) fill.style.width = '35%';
+}
+
+// ── TABS ──
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#tab-translate, #tab-dorm, #tab-docs').forEach(t => t.style.display = 'none');
+  document.getElementById(tabId).style.display = 'block';
+}
+
+// ── PAPERWORK ──
+function simulateTranslate() {
+  const zone = document.querySelector('.translate-zone');
+  zone.innerHTML = '<div class="translate-zone-icon">⏳</div><div class="translate-zone-text">Translating document…</div><div class="translate-zone-sub">AI is processing your file</div>';
+  setTimeout(() => {
+    zone.style.display = 'none';
+    document.getElementById('doc-result').classList.add('show');
+    showToast('✅ Document translated successfully!');
+  }, 1800);
+}
+
+// ── CHAT ──
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendBubble(msg, 'user');
+  const typing = appendTyping();
+  const response = await getAIResponse(msg);
+  typing.remove();
+  appendBubble(response, 'ai');
+}
+
+function sendSuggestion(msg) {
+  document.getElementById('chat-input').value = msg;
+  sendChat();
+}
+
+function appendBubble(text, who) {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble bubble-' + who;
+  if (who === 'ai') {
+    div.innerHTML = `<div class="bubble-ai-header"><div class="ai-icon">✦</div><div class="ai-name">ExchangeAI</div></div>` + formatAIText(text);
+  } else {
+    div.textContent = text;
+  }
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+  return div;
+}
+
+function formatAIText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
+function appendTyping() {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble bubble-ai';
+  div.innerHTML = `<div class="bubble-ai-header"><div class="ai-icon">✦</div><div class="ai-name">ExchangeAI</div></div><div class="ai-typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+  return div;
+}
+
+async function getAIResponse(userMsg) {
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are ExchangeAI, a friendly and helpful AI companion for exchange students studying in ${userCity}. You help with paperwork translation, finding food, navigating public transit, discovering events, and general life abroad. Be concise, warm, and practical. Use emoji sparingly. Format responses clearly with line breaks. Always tailor advice to ${userCity}.`,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+    const data = await response.json();
+    if (data.content && data.content[0]) return data.content[0].text;
+    throw new Error('no content');
+  } catch {
+    return aiResponses.default(userMsg);
+  }
+}
+
+// ── FOOD ──
+function filterFood(pill, tag) {
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  document.querySelectorAll('.food-card').forEach(card => {
+    const tags = card.dataset.tags || '';
+    card.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+  });
+}
+
+// ── EVENTS ──
+function filterPill(pill) {
+  document.querySelectorAll('.event-filters .filter-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+}
+
+function addToCalendar(btn) {
+  const name = btn.closest('.event-card').querySelector('.event-card-name').textContent;
+  btn.classList.add('added');
+  btn.textContent = '✓ Added';
+  showToast('📅 "' + name + '" added to your calendar!');
+}
+
+// ── TRANSIT ──
+function findRoute() {
+  const to = document.getElementById('transit-to').value;
+  if (!to) { showToast('⚠️ Please enter a destination'); return; }
+  document.getElementById('transit-placeholder').style.display = 'none';
+  document.getElementById('route-result').classList.add('show');
+  showToast('🗺 Route found!');
+}
+
+// ── CALENDAR ──
+function buildCalendar() {
+  const grid = document.getElementById('cal-grid');
+  if (!grid) return;
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const events = [10, 11, 12, 13, 15, 16, 20, 25];
+  const deadlines = [10, 25];
+  const today = 9;
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  // March 2026 starts on Sunday (offset 6)
+  for (let i = 0; i < 6; i++) html += `<div class="cal-cell empty"></div>`;
+  for (let d = 1; d <= 31; d++) {
+    const isToday = d === today;
+    const hasEv = events.includes(d);
+    const hasDead = deadlines.includes(d);
+    let cls = 'cal-cell';
+    if (isToday) cls += ' today';
+    if (hasDead) cls += ' has-deadline';
+    else if (hasEv) cls += ' has-event';
+    html += `<div class="${cls}">${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── INIT ──
+document.getElementById('landing').style.display = 'flex';
+document.getElementById('app').style.display = 'none';
+// Make chat view work with flex
+document.getElementById('view-chat').style.cssText = 'display:none;flex-direction:column;height:calc(100vh - 116px);';
+</script>
+</body>
+</html>
