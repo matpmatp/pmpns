@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roamly — App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0c;
+  --cream: #f5f0e8;
+  --warm: #f0ebe0;
+  --accent: #e8521a;
+  --accent2: #2d6be4;
+  --accent3: #22c193;
+  --accent4: #d4962a;
+  --accent5: #9b72f0;
+  --muted: #7a7369;
+  --card: #fffcf7;
+  --border: rgba(15,14,12,0.1);
+  --border2: rgba(15,14,12,0.18);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 228px; flex-shrink: 0;
+  background: var(--ink); color: var(--cream);
+  display: flex; flex-direction: column;
+}
+.sidebar-logo {
+  font-size: 1.45rem; font-weight: 900; letter-spacing: -0.04em;
+  padding: 1.6rem 1.6rem 1.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; gap: 0.45rem;
+  text-decoration: none; color: var(--cream);
+  transition: opacity 0.2s;
+}
+.sidebar-logo:hover { opacity: 0.75; }
+.logo-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.sidebar-section-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.28);
+  padding: 1.4rem 1.6rem 0.45rem;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.72rem 1.6rem;
+  font-size: 0.9rem; font-weight: 600;
+  color: rgba(255,255,255,0.42); cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  border-left: 2.5px solid transparent;
+}
+.nav-item:hover { color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.04); }
+.nav-item.active { color: var(--cream); background: rgba(232,82,26,0.13); border-left-color: var(--accent); }
+.nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--accent); color: white;
+  font-size: 0.62rem; font-weight: 900; padding: 0.15rem 0.42rem;
+  border-radius: 2rem; min-width: 18px; text-align: center;
+}
+.sidebar-footer {
+  margin-top: auto; padding: 1.2rem 1.6rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.user-card { display: flex; align-items: center; gap: 0.75rem; }
+.user-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #ff8c5a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.76rem; font-weight: 900; color: white; flex-shrink: 0;
+}
+.user-name { font-size: 0.88rem; font-weight: 800; color: var(--cream); letter-spacing: -0.01em; }
+.user-city { font-size: 0.72rem; color: rgba(255,255,255,0.38); font-weight: 500; }
+
+/* ── MAIN ── */
+.main { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
+.main::-webkit-scrollbar { width: 5px; }
+.main::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── TOPBAR ── */
+.topbar {
+  padding: 1.1rem 2rem;
+  background: rgba(245,240,232,0.92); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; position: sticky; top: 0; z-index: 5;
+}
+.topbar-title { font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; }
+.topbar-right { display: flex; align-items: center; gap: 0.7rem; }
+.topbar-search {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 2rem; padding: 0.5rem 1.1rem;
+  color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.85rem; font-weight: 500; outline: none; width: 200px;
+  transition: border-color 0.2s;
+}
+.topbar-search:focus { border-color: var(--border2); }
+.topbar-search::placeholder { color: var(--muted); }
+.topbar-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s;
+}
+.topbar-btn:hover { border-color: var(--border2); }
+.back-btn {
+  font-size: 0.82rem; font-weight: 700; color: var(--muted);
+  text-decoration: none; display: flex; align-items: center; gap: 0.3rem;
+  padding: 0.42rem 1rem; border-radius: 2rem;
+  border: 1px solid var(--border); background: var(--card);
+  transition: color 0.2s, border-color 0.2s;
+}
+.back-btn:hover { color: var(--ink); border-color: var(--border2); }
+
+/* ── CONTENT ── */
+.content { padding: 2rem; flex: 1; }
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.22s ease both; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 2rem; }
+.section-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem;
+}
+.page-header h1 {
+  font-size: 2.1rem; font-weight: 900; letter-spacing: -0.04em;
+  line-height: 1.1; margin-bottom: 0.35rem;
+}
+.page-header h1 em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic; font-weight: 400; color: var(--accent);
+}
+.page-header p { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+
+/* ── GRIDS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.2rem; }
+
+/* ── CARD ── */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 1.6rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover { border-color: var(--border2); box-shadow: 0 4px 20px rgba(15,14,12,0.05); }
+.card-label {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem;
+}
+.section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+.section-hdr h2 { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.02em; }
+.see-all {
+  font-size: 0.8rem; font-weight: 700; color: var(--muted); cursor: pointer;
+  text-decoration: none; border-bottom: 1.5px solid transparent; padding-bottom: 1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.see-all:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── STAT CARDS ── */
+.stat-card { display: flex; flex-direction: column; gap: 0.2rem; }
+.stat-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; margin-bottom: 0.8rem;
+}
+.stat-val { font-size: 2.3rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+.stat-lbl { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-top: 0.2rem; }
+.stat-trend { font-size: 0.75rem; font-weight: 700; margin-top: 0.5rem; }
+
+/* ── CHECKLIST ── */
+.checklist-item {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.checklist-item:last-child { border-bottom: none; }
+.check-box {
+  width: 22px; height: 22px; border-radius: 7px;
+  border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 900; flex-shrink: 0; color: white;
+  transition: background 0.2s, border-color 0.2s;
+}
+.checklist-item.done .check-box { background: var(--accent3); border-color: var(--accent3); }
+.checklist-item.done .check-text { text-decoration: line-through; color: var(--muted); }
+.check-text { font-size: 0.88rem; font-weight: 600; flex: 1; }
+.check-tag {
+  font-size: 0.67rem; font-weight: 700;
+  padding: 0.18rem 0.6rem; border-radius: 2rem; flex-shrink: 0;
+}
+.tag-urgent { background: rgba(232,82,26,0.1); color: var(--accent); }
+.tag-today  { background: rgba(45,107,228,0.1); color: var(--accent2); }
+.tag-week   { background: rgba(34,193,147,0.1); color: var(--accent3); }
+
+/* ── AI ── */
+.ai-section {
+  background: var(--ink); color: var(--cream);
+  border-radius: 20px; padding: 1.6rem;
+}
+.ai-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.1rem; }
+.ai-avatar {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.ai-name { font-size: 0.95rem; font-weight: 800; color: var(--cream); letter-spacing: -0.02em; }
+.ai-status { font-size: 0.72rem; color: var(--accent3); font-weight: 600; }
+.ai-messages {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  max-height: 200px; overflow-y: auto; margin-bottom: 0.9rem;
+  scrollbar-width: none;
+}
+.ai-messages::-webkit-scrollbar { display: none; }
+.ai-msg { display: flex; gap: 0.5rem; align-items: flex-start; }
+.ai-msg.user { flex-direction: row-reverse; }
+.msg-bubble {
+  background: rgba(255,255,255,0.08); border-radius: 12px;
+  padding: 0.6rem 0.9rem; font-size: 0.82rem; line-height: 1.55;
+  max-width: 82%; font-weight: 500;
+}
+.ai-msg.user .msg-bubble { background: rgba(232,82,26,0.22); }
+.msg-avatar {
+  width: 26px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 800; flex-shrink: 0;
+  background: rgba(255,255,255,0.1); color: var(--cream);
+}
+.ai-suggestions { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.ai-suggestion {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 2rem; padding: 0.3rem 0.8rem;
+  font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.58);
+  cursor: pointer; font-family: 'Cabinet Grotesk', sans-serif;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.ai-suggestion:hover { background: rgba(232,82,26,0.2); border-color: rgba(232,82,26,0.4); color: var(--cream); }
+.ai-input-row { display: flex; gap: 0.6rem; }
+.ai-input {
+  flex: 1; background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 2rem;
+  padding: 0.58rem 1.1rem; color: var(--cream);
+  font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.85rem;
+  font-weight: 500; outline: none; transition: border-color 0.2s;
+}
+.ai-input::placeholder { color: rgba(255,255,255,0.28); }
+.ai-input:focus { border-color: rgba(232,82,26,0.5); }
+.ai-send {
+  background: var(--accent); border: none; border-radius: 2rem;
+  padding: 0.58rem 1.2rem; color: white;
+  font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 0.85rem;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+}
+.ai-send:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* ── FILTER ── */
+.filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
+.filter-btn {
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 2rem; padding: 0.4rem 1.05rem;
+  font-size: 0.82rem; font-weight: 700; color: var(--muted);
+  cursor: pointer; font-family: 'Cabinet Grotesk', sans-serif;
+  transition: all 0.18s;
+}
+.filter-btn:hover { border-color: var(--border2); color: var(--ink); }
+.filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+
+/* ── EVENTS LIST ── */
+.event-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.event-item {
+  display: flex; gap: 1rem; align-items: center;
+  padding: 0.9rem 1rem; background: var(--warm);
+  border-radius: 14px; border-left: 3px solid var(--accent3);
+}
+.event-item.deadline { border-left-color: var(--accent); }
+.event-item.transport { border-left-color: var(--accent2); }
+.event-date-block { text-align: center; min-width: 36px; }
+.event-date-num { font-size: 1.3rem; font-weight: 900; line-height: 1; letter-spacing: -0.04em; }
+.event-date-mon { font-size: 0.62rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+.event-info { flex: 1; }
+.event-title { font-size: 0.88rem; font-weight: 800; letter-spacing: -0.01em; }
+.event-sub { font-size: 0.75rem; color: var(--muted); font-weight: 500; margin-top: 0.1rem; }
+.event-time {
+  font-size: 0.75rem; font-weight: 800;
+  padding: 0.22rem 0.58rem; border-radius: 2rem;
+  background: var(--card); border: 1px solid var(--border); white-space: nowrap;
+}
+
+/* ── BUDGET ── */
+.cost-row {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.65rem 0; border-bottom: 1px solid var(--border);
+}
+.cost-row:last-child { border: none; }
+.cost-cat { font-size: 0.86rem; font-weight: 700; flex: 1; }
+.cost-bar-wrap { width: 110px; height: 5px; background: var(--warm); border-radius: 3px; overflow: hidden; }
+.cost-bar-fill { height: 100%; border-radius: 3px; }
+.cost-val { font-size: 0.8rem; font-weight: 800; width: 74px; text-align: right; letter-spacing: -0.02em; }
+
+/* ── PLACE CARDS ── */
+.place-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; cursor: pointer;
+}
+.place-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(15,14,12,0.08); }
+.place-thumb {
+  height: 100px; display: flex; align-items: center; justify-content: center; font-size: 3rem;
+}
+.place-body { padding: 1.1rem; }
+.place-name { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+.place-meta { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.place-chip {
+  font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.5rem;
+  border-radius: 2rem; background: var(--warm); color: var(--muted); border: 1px solid var(--border);
+}
+.place-chip.green { background: rgba(34,193,147,0.1); color: var(--accent3); border-color: rgba(34,193,147,0.2); }
+.place-chip.blue  { background: rgba(45,107,228,0.1);  color: var(--accent2); border-color: rgba(45,107,228,0.2); }
+.place-rating { font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+.stars { color: var(--accent4); }
+.place-desc { font-size: 0.77rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.55; font-weight: 500; }
+
+/* ── TRANSPORT ── */
+.route-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 1.2rem 1.4rem;
+  display: flex; gap: 1rem; align-items: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.route-card:hover { border-color: var(--border2); box-shadow: 0 4px 18px rgba(15,14,12,0.06); }
+.route-icon {
+  width: 46px; height: 46px; border-radius: 14px;
+  background: var(--warm); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+}
+.route-info { flex: 1; }
+.route-name { font-size: 0.92rem; font-weight: 800; margin-bottom: 0.2rem; letter-spacing: -0.02em; }
+.route-stops { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+.route-time { font-size: 1.1rem; font-weight: 900; color: var(--accent2); letter-spacing: -0.03em; }
+.route-price { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; text-align: right; font-weight: 600; }
+
+/* ── DOCS ── */
+.doc-item {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.1rem; background: var(--card);
+  border: 1px solid var(--border); border-radius: 16px;
+  cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.doc-item:hover { border-color: var(--border2); box-shadow: 0 4px 14px rgba(15,14,12,0.05); }
+.doc-icon {
+  width: 44px; height: 44px; border-radius: 13px;
+  background: var(--warm); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+}
+.doc-info { flex: 1; }
+.doc-name { font-size: 0.9rem; font-weight: 800; letter-spacing: -0.02em; }
+.doc-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.12rem; font-weight: 500; }
+.doc-status {
+  font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.72rem; border-radius: 2rem; flex-shrink: 0;
+}
+.status-done    { background: rgba(34,193,147,0.1);  color: var(--accent3); }
+.status-pending { background: rgba(232,82,26,0.1);   color: var(--accent); }
+.status-review  { background: rgba(212,150,42,0.1);  color: var(--accent4); }
+
+/* ── UPLOAD ── */
+.upload-area {
+  border: 2px dashed var(--border2); border-radius: 18px;
+  padding: 2.5rem; text-align: center; cursor: pointer;
+  background: var(--warm); transition: border-color 0.2s, background 0.2s;
+  margin-top: 0.5rem;
+}
+.upload-area:hover { border-color: var(--accent); background: rgba(232,82,26,0.03); }
+.upload-icon { font-size: 2.4rem; margin-bottom: 0.7rem; }
+.upload-text { font-size: 0.92rem; font-weight: 800; margin-bottom: 0.3rem; }
+.upload-sub { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+
+/* ── TRANSLATION ── */
+.translation-result {
+  display: none; margin-top: 1rem; padding: 1.2rem;
+  background: var(--warm); border: 1px solid var(--border);
+  border-radius: 16px; animation: fadeUp 0.3s ease;
+}
+.translation-result.show { display: block; }
+.translation-original { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.6rem; font-style: italic; }
+.translation-text { font-size: 0.87rem; line-height: 1.7; font-weight: 500; }
+.translation-warning {
+  display: flex; align-items: flex-start; gap: 0.4rem;
+  font-size: 0.76rem; color: var(--accent4); font-weight: 600; line-height: 1.5;
+  margin-top: 0.8rem; padding: 0.6rem 0.8rem;
+  background: rgba(212,150,42,0.08); border-radius: 10px;
+  border: 1px solid rgba(212,150,42,0.15);
+}
+
+/* ── EVENT CARDS ── */
+.event-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; cursor: pointer;
+}
+.event-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 8px 26px rgba(15,14,12,0.08); }
+.event-header { padding: 1.3rem; }
+.event-emoji { font-size: 2.2rem; line-height: 1; margin-bottom: 0.6rem; display: block; }
+.event-card-title { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+.event-card-meta { font-size: 0.76rem; color: var(--muted); font-weight: 600; line-height: 1.6; }
+.event-footer {
+  padding: 0.8rem 1.3rem; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--warm);
+}
+.event-type-badge { font-size: 0.68rem; font-weight: 800; padding: 0.22rem 0.62rem; border-radius: 2rem; }
+.badge-calm    { background: rgba(34,193,147,0.1); color: var(--accent3); }
+.badge-culture { background: rgba(155,114,240,0.1); color: var(--accent5); }
+.badge-social  { background: rgba(45,107,228,0.1);  color: var(--accent2); }
+.badge-esn     { background: rgba(232,82,26,0.1);   color: var(--accent); }
+.join-btn {
+  font-size: 0.78rem; font-weight: 800; padding: 0.33rem 0.9rem;
+  border-radius: 2rem; background: var(--ink); border: none; color: var(--cream);
+  cursor: pointer; font-family: 'Cabinet Grotesk', sans-serif;
+  transition: background 0.2s, transform 0.15s;
+}
+.join-btn:hover { background: var(--accent); transform: translateY(-1px); }
+.join-btn.joined { background: transparent; color: var(--accent3); border: 1.5px solid rgba(34,193,147,0.35); }
+.join-btn.joined:hover { background: rgba(34,193,147,0.1); }
+
+/* ── CALENDAR ── */
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cal-day-label {
+  font-size: 0.62rem; font-weight: 800; color: var(--muted);
+  text-align: center; padding: 0.4rem 0;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.cal-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: 10px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  transition: background 0.15s; position: relative;
+}
+.cal-day:hover { background: var(--warm); }
+.cal-day.today { background: var(--accent); color: white; font-weight: 900; }
+.cal-day.has-event::after {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent3); position: absolute; bottom: 3px;
+}
+.cal-day.today.has-event::after { background: rgba(255,255,255,0.65); }
+.cal-day.other-month { color: var(--muted); opacity: 0.38; }
+
+/* ── UTIL ── */
+.inline-input {
+  background: var(--warm); border: 1.5px solid var(--border);
+  border-radius: 2rem; padding: 0.6rem 1.1rem;
+  color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.88rem; font-weight: 600; outline: none; width: 100%;
+  transition: border-color 0.2s;
+}
+.inline-input:focus { border-color: var(--border2); }
+.inline-input::placeholder { color: var(--muted); }
+.btn-dark {
+  background: var(--ink); border: none; border-radius: 2rem;
+  padding: 0.62rem 1.35rem; color: var(--cream);
+  font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 0.88rem;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-dark:hover { background: var(--accent); transform: translateY(-1px); }
+.tip-box {
+  padding: 0.8rem 1rem; background: var(--warm);
+  border-radius: 14px; border: 1px solid var(--border);
+  font-size: 0.83rem; line-height: 1.6; font-weight: 500;
+}
+.tip-box strong { font-weight: 800; }
+.warn-box {
+  padding: 0.78rem 1rem; background: rgba(232,82,26,0.06);
+  border-radius: 14px; border: 1px solid rgba(232,82,26,0.15);
+  font-size: 0.82rem; color: var(--accent); font-weight: 700; line-height: 1.5;
+}
+.route-result-box {
+  display: none; margin-top: 1rem; padding: 1.1rem;
+  background: var(--warm); border-radius: 16px; border: 1px solid var(--border);
+  animation: fadeUp 0.3s ease;
+}
+.route-result-box.show { display: block; }
+.line-badge {
+  display: inline-flex; align-items: center;
+  padding: 0.18rem 0.58rem; border-radius: 6px;
+  font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em;
+}
+.food-ai-resp {
+  display: none; margin-top: 0.9rem; padding: 0.9rem 1.1rem;
+  background: var(--warm); border-radius: 14px; border: 1px solid var(--border);
+  font-size: 0.86rem; line-height: 1.65; font-weight: 500;
+  animation: fadeUp 0.3s ease;
+}
+.food-ai-resp.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <a href="erasmus-app.html" class="sidebar-logo"><span class="logo-dot"></span>Roamly</a>
+
+  <span class="sidebar-section-label">Main</span>
+  <div class="nav-item active" onclick="navigate('dashboard',this)"><span class="nav-icon">⊞</span> Dashboard</div>
+  <div class="nav-item" onclick="navigate('assistant',this)"><span class="nav-icon">✦</span> AI Assistant <span class="nav-badge">1</span></div>
+
+  <span class="sidebar-section-label">Tools</span>
+  <div class="nav-item" onclick="navigate('paperwork',this)"><span class="nav-icon">📄</span> Paperwork <span class="nav-badge">3</span></div>
+  <div class="nav-item" onclick="navigate('food',this)"><span class="nav-icon">🍽️</span> Food & Places</div>
+  <div class="nav-item" onclick="navigate('events',this)"><span class="nav-icon">🎉</span> Events</div>
+  <div class="nav-item" onclick="navigate('transport',this)"><span class="nav-icon">🚌</span> Transport</div>
+  <div class="nav-item" onclick="navigate('calendar',this)"><span class="nav-icon">📅</span> Calendar</div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AL</div>
+      <div><div class="user-name">Alex</div><div class="user-city">📍 Bratislava</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <a href="erasmus-app.html" class="back-btn">← Home</a>
+      <input class="topbar-search" placeholder="🔍 Search anything..." />
+      <div class="topbar-btn">🔔</div>
+      <div class="topbar-btn">⚙</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="section-label">Day 3 · Bratislava</div>
+        <h1>Good morning, <em>Alex</em> 👋</h1>
+        <p>3 urgent tasks need your attention today</p>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:1.3rem">
+        <div class="card stat-card">
+          <div class="stat-icon" style="background:rgba(232,82,26,0.1)">📋</div>
+          <div class="stat-val" style="color:var(--accent)">3</div>
+          <div class="stat-lbl">Tasks today</div>
+          <div class="stat-trend" style="color:var(--accent)">⚠ 2 urgent</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon" style="background:rgba(212,150,42,0.1)">📄</div>
+          <div class="stat-val" style="color:var(--accent4)">4</div>
+          <div class="stat-lbl">Docs pending</div>
+          <div class="stat-trend" style="color:var(--accent4)">↑ due this week</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon" style="background:rgba(34,193,147,0.1)">💶</div>
+          <div class="stat-val" style="color:var(--accent3)">€124</div>
+          <div class="stat-lbl">Budget left</div>
+          <div class="stat-trend" style="color:var(--accent3)">✓ on track</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon" style="background:rgba(45,107,228,0.1)">🎉</div>
+          <div class="stat-val" style="color:var(--accent2)">7</div>
+          <div class="stat-lbl">Events nearby</div>
+          <div class="stat-trend" style="color:var(--accent2)">↗ this weekend</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:1.3rem">
+        <div class="card">
+          <div class="section-hdr">
+            <h2>Day 1–3 Checklist</h2>
+            <span class="see-all" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[3])">View all →</span>
+          </div>
+          <div class="checklist-item done" onclick="toggleCheck(this)"><div class="check-box">✓</div><span class="check-text">Get transit card from airport</span><span class="check-tag tag-week">Done</span></div>
+          <div class="checklist-item done" onclick="toggleCheck(this)"><div class="check-box">✓</div><span class="check-text">Check into dormitory</span><span class="check-tag tag-week">Done</span></div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Submit dormitory registration form</span><span class="check-tag tag-urgent">Urgent</span></div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Activate student ID card</span><span class="check-tag tag-urgent">Urgent</span></div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Register at international office</span><span class="check-tag tag-today">Today</span></div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Open local bank account</span><span class="check-tag tag-week">This week</span></div>
+          <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Get local SIM card</span><span class="check-tag tag-week">This week</span></div>
+        </div>
+
+        <div class="ai-section">
+          <div class="ai-header">
+            <div class="ai-avatar">✦</div>
+            <div><div class="ai-name">Roamly Assistant</div><div class="ai-status">● Online · Ready to help</div></div>
+          </div>
+          <div class="ai-messages" id="ai-messages-dash">
+            <div class="ai-msg"><div class="msg-avatar">✦</div><div class="msg-bubble">Hey Alex! Your dormitory registration form is due at 5 PM today. Want me to help translate it?</div></div>
+          </div>
+          <div class="ai-suggestions">
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'dash')">Translate my dorm form</div>
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'dash')">Find food nearby</div>
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'dash')">What's on this weekend?</div>
+          </div>
+          <div class="ai-input-row">
+            <input class="ai-input" id="ai-input-dash" placeholder="Ask anything about Bratislava..." onkeydown="if(event.key==='Enter')sendAIInput('dash')"/>
+            <button class="ai-send" onclick="sendAIInput('dash')">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="section-hdr"><h2>Monthly Budget</h2><span class="see-all">€350 total</span></div>
+          <div class="cost-row"><span class="cost-cat">🍽️ Food</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:65%;background:var(--accent)"></div></div><span class="cost-val">€98 / €150</span></div>
+          <div class="cost-row"><span class="cost-cat">🚌 Transport</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:30%;background:var(--accent2)"></div></div><span class="cost-val">€18 / €60</span></div>
+          <div class="cost-row"><span class="cost-cat">🎉 Social</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:20%;background:var(--accent5)"></div></div><span class="cost-val">€14 / €70</span></div>
+          <div class="cost-row"><span class="cost-cat">🛒 Other</span><div class="cost-bar-wrap"><div class="cost-bar-fill" style="width:80%;background:var(--accent4)"></div></div><span class="cost-val">€56 / €70</span></div>
+          <div style="margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.82rem;color:var(--muted);font-weight:600">Spent so far</span>
+            <strong style="font-size:0.9rem;font-weight:900;letter-spacing:-0.02em">€186 / €350</strong>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-hdr"><h2>Upcoming</h2><span class="see-all" onclick="navigate('events',document.querySelectorAll('.nav-item')[5])">See all →</span></div>
+          <div class="event-list">
+            <div class="event-item deadline">
+              <div class="event-date-block"><div class="event-date-num">12</div><div class="event-date-mon">Mar</div></div>
+              <div class="event-info"><div class="event-title">Dorm Registration Deadline</div><div class="event-sub">Office 104 · bring printed form</div></div>
+              <div class="event-time" style="color:var(--accent)">17:00</div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-block"><div class="event-date-num">14</div><div class="event-date-mon">Mar</div></div>
+              <div class="event-info"><div class="event-title">ESN City Walking Tour</div><div class="event-sub">SNP Square · Free</div></div>
+              <div class="event-time">10:00</div>
+            </div>
+            <div class="event-item transport">
+              <div class="event-date-block"><div class="event-date-num">15</div><div class="event-date-mon">Mar</div></div>
+              <div class="event-info"><div class="event-title">Orientation Day · STU</div><div class="event-sub">Faculty of Informatics · Room A1</div></div>
+              <div class="event-time">09:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AI ASSISTANT ══ -->
+    <div class="page" id="page-assistant">
+      <div class="page-header">
+        <div class="section-label">Powered by AI</div>
+        <h1>Your <em>smart</em> companion ✦</h1>
+        <p>Ask anything about student life in Bratislava</p>
+      </div>
+      <div class="grid-2">
+        <div class="ai-section" style="height:500px;display:flex;flex-direction:column">
+          <div class="ai-header">
+            <div class="ai-avatar">✦</div>
+            <div><div class="ai-name">Roamly Assistant</div><div class="ai-status">● Online · Ready to help</div></div>
+          </div>
+          <div class="ai-messages" id="ai-messages-main" style="flex:1;max-height:none">
+            <div class="ai-msg"><div class="msg-avatar">✦</div><div class="msg-bubble">Hello! I can help with paperwork translation, finding places to eat, navigating Bratislava, local events, and more. What do you need?</div></div>
+          </div>
+          <div class="ai-suggestions" style="margin-top:0.5rem">
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'main')">How do I get a student card?</div>
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'main')">Cheap places to eat near STU</div>
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'main')">Translate a Slovak document</div>
+            <div class="ai-suggestion" onclick="sendAIMsg(this,'main')">How does public transport work?</div>
+          </div>
+          <div class="ai-input-row">
+            <input class="ai-input" id="ai-input-main" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendAIInput('main')"/>
+            <button class="ai-send" onclick="sendAIInput('main')">Send →</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1.2rem">
+          <div class="card">
+            <div class="card-label">Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.4rem">
+              <div class="doc-item" onclick="navigate('paperwork',document.querySelectorAll('.nav-item')[3])"><div class="doc-icon">📄</div><div class="doc-info"><div class="doc-name">Upload & Translate Document</div><div class="doc-sub">Upload a Slovak form to translate</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
+              <div class="doc-item" onclick="navigate('food',document.querySelectorAll('.nav-item')[4])"><div class="doc-icon">🍽️</div><div class="doc-info"><div class="doc-name">Find Food Near Me</div><div class="doc-sub">Budget-friendly student restaurants</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
+              <div class="doc-item" onclick="navigate('transport',document.querySelectorAll('.nav-item')[6])"><div class="doc-icon">🚌</div><div class="doc-info"><div class="doc-name">Plan a Route</div><div class="doc-sub">Directions + student discount info</div></div><span style="color:var(--muted);font-weight:800">→</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-label">What I can do</div>
+            <div style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.4rem">
+              <div class="tip-box">✦ <strong>Document translation</strong> — Slovak, Czech, German, Hungarian</div>
+              <div class="tip-box">✦ <strong>Paperwork guidance</strong> — step-by-step form help</div>
+              <div class="tip-box">✦ <strong>Local recommendations</strong> — food, events, places</div>
+              <div class="tip-box">✦ <strong>Schedule extraction</strong> — scans emails for dates</div>
+              <div class="tip-box">✦ <strong>Transit planning</strong> — routes + student discounts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAPERWORK ══ -->
+    <div class="page" id="page-paperwork">
+      <div class="page-header">
+        <div class="section-label">Admin & Docs</div>
+        <h1>Your <em>paperwork</em> 📄</h1>
+        <p>Manage, translate, and track all your official documents</p>
+      </div>
+      <div class="grid-2" style="margin-bottom:1.3rem">
+        <div class="card">
+          <div class="card-label">Upload & Translate</div>
+          <div class="upload-area" onclick="simulateUpload()">
+            <div class="upload-icon">📎</div>
+            <div class="upload-text">Drop a document or click to upload</div>
+            <div class="upload-sub">PDF, JPG, PNG · Slovak, Czech, Hungarian, German</div>
+          </div>
+          <div class="translation-result" id="translation-demo">
+            <div class="card-label">Translation Result</div>
+            <div class="translation-original">Original: "Nájomná zmluva — Podmienky ubytovacieho zariadenia"</div>
+            <div class="translation-text"><strong>Lease Agreement — Terms of Accommodation Facility</strong><br><br>The tenant is obligated to pay a security deposit of <strong>€150</strong> within 3 working days of arrival. The deposit will be returned within 14 days of checkout, provided no damage has occurred. Mandatory fields marked with * must be completed in <em>block capitals</em>. Passport number and date of arrival are required.</div>
+            <div class="translation-warning">⚠️ This translation is an AI aid. The original Slovak document remains legally binding. When unsure, contact the dormitory office directly.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-hdr"><h2>Document Status</h2></div>
+          <div style="display:flex;flex-direction:column;gap:0.7rem">
+            <div class="doc-item"><div class="doc-icon">🏠</div><div class="doc-info"><div class="doc-name">Dormitory Registration</div><div class="doc-sub">Due: March 12 · Office 104</div></div><span class="doc-status status-pending">Pending</span></div>
+            <div class="doc-item"><div class="doc-icon">🎓</div><div class="doc-info"><div class="doc-name">Learning Agreement</div><div class="doc-sub">Submit to Erasmus coordinator</div></div><span class="doc-status status-review">In Review</span></div>
+            <div class="doc-item"><div class="doc-icon">💳</div><div class="doc-info"><div class="doc-name">Student ID Application</div><div class="doc-sub">International Office · Building A</div></div><span class="doc-status status-pending">Pending</span></div>
+            <div class="doc-item"><div class="doc-icon">🏥</div><div class="doc-info"><div class="doc-name">Health Insurance Declaration</div><div class="doc-sub">EHIC or local equivalent</div></div><span class="doc-status status-pending">Pending</span></div>
+            <div class="doc-item"><div class="doc-icon">📋</div><div class="doc-info"><div class="doc-name">Course Enrollment Form</div><div class="doc-sub">Deadline: March 20</div></div><span class="doc-status status-done">Done</span></div>
+            <div class="doc-item"><div class="doc-icon">✈️</div><div class="doc-info"><div class="doc-name">Arrival Confirmation</div><div class="doc-sub">Sent to home university</div></div><span class="doc-status status-done">Done</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-hdr"><h2>Field-by-Field Guide — Dormitory Registration</h2></div>
+        <div class="grid-2">
+          <div style="display:flex;flex-direction:column;gap:0.5rem">
+            <div class="tip-box"><span style="color:var(--accent);font-weight:900">Field 1</span> — Meno a priezvisko = <strong>Full name</strong></div>
+            <div class="tip-box"><span style="color:var(--accent);font-weight:900">Field 2</span> — Číslo pasu = <strong>Passport number</strong></div>
+            <div class="tip-box"><span style="color:var(--accent4);font-weight:900">Field 3 ⚠</span> — Dátum príchodu = <strong>Arrival date (DD/MM/YYYY)</strong></div>
+            <div class="tip-box"><span style="color:var(--accent);font-weight:900">Field 4</span> — Domáca adresa = <strong>Home address (your country)</strong></div>
+            <div class="warn-box">⚠ Field 7 — Zábezpeka = <strong>Security deposit (€150, within 3 days)</strong> — Read carefully before signing</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.55rem">
+            <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.1rem">Tips from Erasmus students</div>
+            <div class="tip-box" style="border-left:3px solid var(--accent3)">"Bring a printed copy AND a digital version to the office" — Marta, France</div>
+            <div class="tip-box" style="border-left:3px solid var(--accent2)">"Office open Mon–Fri 8–12 and 13–16 only. Don't miss it!" — Jonas, Germany</div>
+            <div class="tip-box" style="border-left:3px solid var(--accent5)">"They accept deposit in cash only. ATM is in the lobby." — Sara, Italy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FOOD ══ -->
+    <div class="page" id="page-food">
+      <div class="page-header">
+        <div class="section-label">Eat & Explore</div>
+        <h1>Food & <em>Places</em> 🍽️</h1>
+        <p>Rated by Erasmus students — not tourists</p>
+      </div>
+      <div class="filter-row">
+        <div class="filter-btn active">All</div>
+        <div class="filter-btn">€ Under €5</div>
+        <div class="filter-btn">€€ Under €10</div>
+        <div class="filter-btn">Near Me</div>
+        <div class="filter-btn">Open Now</div>
+        <div class="filter-btn">Student Discount</div>
+        <div class="filter-btn">Vegetarian</div>
+      </div>
+      <div class="grid-3" style="margin-bottom:1.3rem">
+        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(232,82,26,0.07),rgba(232,82,26,0.02))">🥙</div><div class="place-body"><div class="place-name">Bufet STU</div><div class="place-meta"><span class="place-chip green">€2–4</span><span class="place-chip blue">150m</span><span class="place-chip">Student discount</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.1 · 89 Erasmus reviews</span></div><div class="place-desc">Canteen inside STU campus. Daily menu always includes soup + main for €3.50. Cash only.</div></div></div>
+        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(34,193,147,0.07),rgba(34,193,147,0.02))">🍕</div><div class="place-body"><div class="place-name">Balkán Pizza</div><div class="place-meta"><span class="place-chip green">€3–6</span><span class="place-chip blue">400m</span></div><div class="place-rating"><span class="stars">★★★★★</span><span style="color:var(--muted)">4.7 · 124 Erasmus reviews</span></div><div class="place-desc">Huge slices, super cheap. Local institution. Open till midnight on weekends.</div></div></div>
+        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(45,107,228,0.07),rgba(45,107,228,0.02))">🍜</div><div class="place-body"><div class="place-name">Pho Saigon</div><div class="place-meta"><span class="place-chip green">€4–7</span><span class="place-chip blue">800m</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.4 · 56 Erasmus reviews</span></div><div class="place-desc">Best value in the area. Big portions, very filling. Popular with international students.</div></div></div>
+        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(155,114,240,0.07),rgba(155,114,240,0.02))">☕</div><div class="place-body"><div class="place-name">Caffe Kút</div><div class="place-meta"><span class="place-chip green">€1.5–3</span><span class="place-chip blue">200m</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.2 · 71 Erasmus reviews</span></div><div class="place-desc">Great coffee and wifi. Popular study spot. Quiet atmosphere — perfect for calm evenings.</div></div></div>
+        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(212,150,42,0.07),rgba(212,150,42,0.02))">🥗</div><div class="place-body"><div class="place-name">Fresh Market</div><div class="place-meta"><span class="place-chip green">€2–5</span><span class="place-chip blue">600m</span><span class="place-chip">Vegetarian</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.0 · 38 Erasmus reviews</span></div><div class="place-desc">Fresh salads and bowls. Great for healthy eating on a budget. Closes at 6PM.</div></div></div>
+        <div class="place-card"><div class="place-thumb" style="background:linear-gradient(135deg,rgba(232,82,26,0.05),rgba(232,82,26,0.01))">🍺</div><div class="place-body"><div class="place-name">Paparazzi Beer Garden</div><div class="place-meta"><span class="place-chip green">€2–8</span><span class="place-chip blue">1.1km</span></div><div class="place-rating"><span class="stars">★★★★☆</span><span style="color:var(--muted)">4.3 · 203 Erasmus reviews</span></div><div class="place-desc">ESN meetup hotspot. Huge outdoor terrace. Very social, lots of Erasmus students.</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Ask AI for personalised recommendations</div>
+        <div class="ai-input-row" style="margin-top:0.6rem">
+          <input class="inline-input" id="ai-input-food" placeholder="e.g. 'Find vegetarian food under €5 near Mlynska dolina'" onkeydown="if(event.key==='Enter')sendAIInput('food')"/>
+          <button class="btn-dark" onclick="sendAIInput('food')">Ask AI ✦</button>
+        </div>
+        <div class="food-ai-resp" id="ai-food-response"></div>
+      </div>
+    </div>
+
+    <!-- ══ EVENTS ══ -->
+    <div class="page" id="page-events">
+      <div class="page-header">
+        <div class="section-label">Social & Culture</div>
+        <h1>Events in <em>Bratislava</em> 🎉</h1>
+        <p>Curated for exchange students — calm events included</p>
+      </div>
+      <div class="filter-row">
+        <div class="filter-btn active">All Events</div>
+        <div class="filter-btn">ESN Official</div>
+        <div class="filter-btn">Calm / Cultural</div>
+        <div class="filter-btn">Outdoors</div>
+        <div class="filter-btn">Free Entry</div>
+        <div class="filter-btn">This Weekend</div>
+      </div>
+      <div class="grid-3">
+        <div class="event-card"><div class="event-header"><span class="event-emoji">🚶</span><div class="event-card-title">Old Town Walking Tour</div><div class="event-card-meta">📅 Sat 14 Mar · 10:00 AM<br>📍 SNP Square · Free entry</div></div><div class="event-footer"><span class="event-type-badge badge-calm">Calm</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
+        <div class="event-card"><div class="event-header"><span class="event-emoji">🎨</span><div class="event-card-title">Slovak Culture Night</div><div class="event-card-meta">📅 Fri 13 Mar · 19:00<br>📍 Cultural Center · €3</div></div><div class="event-footer"><span class="event-type-badge badge-culture">Cultural</span><button class="join-btn joined" onclick="toggleJoin(this)">✓ Going</button></div></div>
+        <div class="event-card"><div class="event-header"><span class="event-emoji">🏰</span><div class="event-card-title">Bratislava Castle Visit</div><div class="event-card-meta">📅 Sun 15 Mar · 11:00 AM<br>📍 Castle Hill · €5 student</div></div><div class="event-footer"><span class="event-type-badge badge-culture">Cultural</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
+        <div class="event-card"><div class="event-header"><span class="event-emoji">🌍</span><div class="event-card-title">ESN International Dinner</div><div class="event-card-meta">📅 Wed 18 Mar · 18:00<br>📍 STU Main Hall · €5</div></div><div class="event-footer"><span class="event-type-badge badge-esn">ESN</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
+        <div class="event-card"><div class="event-header"><span class="event-emoji">🎲</span><div class="event-card-title">Board Game Night</div><div class="event-card-meta">📅 Thu 19 Mar · 19:00<br>📍 Common Room B2 · Free</div></div><div class="event-footer"><span class="event-type-badge badge-social">Social</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
+        <div class="event-card"><div class="event-header"><span class="event-emoji">🎵</span><div class="event-card-title">Jazz at Žilina Café</div><div class="event-card-meta">📅 Fri 20 Mar · 20:00<br>📍 Staré Mesto · €5</div></div><div class="event-footer"><span class="event-type-badge badge-calm">Calm</span><button class="join-btn" onclick="toggleJoin(this)">+ Join</button></div></div>
+      </div>
+    </div>
+
+    <!-- ══ TRANSPORT ══ -->
+    <div class="page" id="page-transport">
+      <div class="page-header">
+        <div class="section-label">Getting Around</div>
+        <h1>Public <em>Transport</em> 🚌</h1>
+        <p>Bratislava transit guide for exchange students</p>
+      </div>
+      <div class="grid-2" style="margin-bottom:1.3rem">
+        <div class="card">
+          <div class="card-label" style="margin-bottom:1rem">Plan a Route</div>
+          <div style="display:flex;flex-direction:column;gap:0.7rem">
+            <div><div style="font-size:0.7rem;font-weight:700;color:var(--muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.08em">From</div><input class="inline-input" value="Mlynská dolina (Dormitory)"/></div>
+            <div><div style="font-size:0.7rem;font-weight:700;color:var(--muted);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.08em">To</div><input class="inline-input" value="STU Main Campus"/></div>
+            <button class="btn-dark" style="width:100%;justify-content:center" onclick="showRoute()">Find Route ✦</button>
+          </div>
+          <div class="route-result-box" id="route-result">
+            <div style="font-size:0.82rem;font-weight:800;color:var(--accent3);margin-bottom:0.8rem">Best Route · 18 min</div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.83rem">
+              <div style="display:flex;gap:0.5rem;align-items:center"><span class="line-badge" style="background:rgba(45,107,228,0.1);color:var(--accent2)">BUS 32</span> Mlynská dolina → Hodžovo nám. (6 stops)</div>
+              <div style="color:var(--muted);font-size:0.75rem;padding-left:0.4rem;font-weight:600">↓ Transfer at Hodžovo námestie</div>
+              <div style="display:flex;gap:0.5rem;align-items:center"><span class="line-badge" style="background:rgba(232,82,26,0.1);color:var(--accent)">TRAM 4</span> Hodžovo nám. → STU (3 stops)</div>
+            </div>
+            <div class="tip-box" style="margin-top:0.9rem">💳 Student ticket: Select <strong>"Žiak/Študent"</strong> at any DPB machine + show ISIC. Single ride = <strong style="color:var(--accent3)">€0.70</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label" style="margin-bottom:1rem">Student Discount Guide</div>
+          <div style="display:flex;flex-direction:column;gap:0.7rem">
+            <div class="tip-box"><strong>💳 How to get a student pass</strong><br><span style="color:var(--muted)">1. Go to any DPB office (Mon–Fri 8–16)<br>2. Bring student ID + passport<br>3. Ask for "Mesačné predplatné — Študent"<br>4. Monthly pass = <strong style="color:var(--accent3)">€13.20</strong> (vs €24 regular)</span></div>
+            <div class="tip-box"><strong>🚉 Key Lines for STU Students</strong><br><span style="color:var(--muted)">Bus 32, 39 — Mlynská dolina area<br>Tram 4 — City center to campus<br>Bus 93 — Night bus (runs till 2AM)</span></div>
+            <div class="warn-box">⚠️ Always validate your ticket when boarding. Inspectors are frequent — fines are <strong>€50</strong>.</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-hdr"><h2>Common Routes</h2></div>
+      <div style="display:flex;flex-direction:column;gap:0.8rem">
+        <div class="route-card"><div class="route-icon">🏠→🎓</div><div class="route-info"><div class="route-name">Dorm → STU Campus</div><div class="route-stops">Bus 32 (6 stops) + Tram 4 (3 stops)</div></div><div style="text-align:right"><div class="route-time">18 min</div><div class="route-price">€0.70 student</div></div></div>
+        <div class="route-card"><div class="route-icon">🏠→🏰</div><div class="route-info"><div class="route-name">Dorm → Old Town / Castle</div><div class="route-stops">Bus 39 (8 stops) · Direct</div></div><div style="text-align:right"><div class="route-time">22 min</div><div class="route-price">€0.70 student</div></div></div>
+        <div class="route-card"><div class="route-icon">🏠→🛒</div><div class="route-info"><div class="route-name">Dorm → Tesco / Shopping</div><div class="route-stops">Bus 32 (4 stops) · Lamačská cesta stop</div></div><div style="text-align:right"><div class="route-time">10 min</div><div class="route-price">€0.70 student</div></div></div>
+        <div class="route-card"><div class="route-icon">🏠→🚉</div><div class="route-info"><div class="route-name">Dorm → Main Train Station</div><div class="route-stops">Bus 39 + Tram 1 — Hlavná stanica</div></div><div style="text-align:right"><div class="route-time">30 min</div><div class="route-price">€0.70 student</div></div></div>
+      </div>
+    </div>
+
+    <!-- ══ CALENDAR ══ -->
+    <div class="page" id="page-calendar">
+      <div class="page-header">
+        <div class="section-label">Schedule</div>
+        <h1>Your <em>calendar</em> 📅</h1>
+        <p>All deadlines, events, and university dates in one place</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="section-hdr">
+            <h2>March 2026</h2>
+            <div style="display:flex;gap:0.4rem">
+              <div class="topbar-btn" style="font-size:0.85rem;font-weight:800">‹</div>
+              <div class="topbar-btn" style="font-size:0.85rem;font-weight:800">›</div>
+            </div>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-day-label">Mon</div><div class="cal-day-label">Tue</div><div class="cal-day-label">Wed</div><div class="cal-day-label">Thu</div><div class="cal-day-label">Fri</div><div class="cal-day-label">Sat</div><div class="cal-day-label">Sun</div>
+            <div class="cal-day other-month">24</div><div class="cal-day other-month">25</div><div class="cal-day other-month">26</div><div class="cal-day other-month">27</div><div class="cal-day other-month">28</div><div class="cal-day">1</div><div class="cal-day">2</div>
+            <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day today">9</div>
+            <div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day has-event">12</div><div class="cal-day">13</div><div class="cal-day has-event">14</div><div class="cal-day has-event">15</div><div class="cal-day">16</div>
+            <div class="cal-day">17</div><div class="cal-day has-event">18</div><div class="cal-day has-event">19</div><div class="cal-day has-event">20</div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div>
+            <div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
+            <div class="cal-day">31</div>
+          </div>
+          <div style="display:flex;gap:1rem;margin-top:1rem;font-size:0.75rem;font-weight:700;color:var(--muted)">
+            <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span>Today</div>
+            <div style="display:flex;align-items:center;gap:0.35rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent3);display:inline-block"></span>Event</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-hdr"><h2>Events This Month</h2></div>
+          <div class="event-list">
+            <div class="event-item deadline"><div class="event-date-block"><div class="event-date-num">12</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🔴 Dorm Registration Deadline</div><div class="event-sub">Submit form to Office 104 by 17:00</div></div><div class="event-time" style="color:var(--accent)">17:00</div></div>
+            <div class="event-item"><div class="event-date-block"><div class="event-date-num">14</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🚶 ESN City Walking Tour</div><div class="event-sub">Old Town · SNP Square · Free</div></div><div class="event-time">10:00</div></div>
+            <div class="event-item transport"><div class="event-date-block"><div class="event-date-num">15</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🎓 Orientation Day — STU</div><div class="event-sub">Faculty of Informatics · Room A1</div></div><div class="event-time">09:00</div></div>
+            <div class="event-item"><div class="event-date-block"><div class="event-date-num">18</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🌍 ESN International Dinner</div><div class="event-sub">STU Main Hall · €5</div></div><div class="event-time">18:00</div></div>
+            <div class="event-item"><div class="event-date-block"><div class="event-date-num">19</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🎲 Board Game Night</div><div class="event-sub">Common Room B2 · Free</div></div><div class="event-time">19:00</div></div>
+            <div class="event-item deadline"><div class="event-date-block"><div class="event-date-num">20</div><div class="event-date-mon">Mar</div></div><div class="event-info"><div class="event-title">🔴 Course Enrollment Deadline</div><div class="event-sub">Submit to academic office</div></div><div class="event-time" style="color:var(--accent)">23:59</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const pageTitles = { dashboard:'Dashboard', assistant:'AI Assistant', paperwork:'Paperwork', food:'Food & Places', events:'Events', transport:'Transport', calendar:'Calendar' };
+function navigate(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id] || id;
+}
+function toggleCheck(item) { item.classList.toggle('done'); }
+
+const aiResponses = {
+  'Translate my dorm form': "Sure! Upload your document in the Paperwork tab and I'll translate it instantly. Based on typical STU forms, you'll need: passport number, arrival date (DD/MM/YYYY), home address, and emergency contact. Field 7 (Zábezpeka) = €150 security deposit due within 3 days.",
+  'Find food nearby': "From Mlynská dolina: 🥙 Bufet STU (150m, €2–4, student canteen!), 🍕 Balkán Pizza (400m, €3–6, huge slices), ☕ Caffe Kút (200m, €1.5–3, great for studying). All rated by Erasmus students, not tourists!",
+  "What's on this weekend?": "This weekend: 🚶 ESN Walking Tour (Sat 10AM, SNP Square, free!) 🏰 Bratislava Castle (Sun 11AM, €5 student) 🎨 Slovak Culture Night (Fri 7PM, €3) 🎵 Jazz at Žilina (Fri 8PM, €5) — calm and cozy, no party vibe!",
+  'How do I get a student card?': "1️⃣ International Office — Building A, Room 101, Mon–Fri 9–12. 2️⃣ Bring passport + enrollment confirmation + 1 photo. 3️⃣ Pay €15. 4️⃣ Card ready in 3–5 days. Gives you 50% off transport + museum and restaurant discounts!",
+  'Cheap places to eat near STU': "Best budget spots: 🥙 Bufet STU (on campus, €3.50 daily menu incl. soup), 🍜 Pho Saigon (10 min, €4–7, huge portions), 🥗 Fresh Market (8 min, €2–5, vegetarian options). Canteen menu changes daily!",
+  'Translate a Slovak document': "Go to the Paperwork tab and click the upload area! I translate Slovak, Czech, Hungarian and German. Uncertain translations get flagged in yellow, legal clauses get a special warning. I also have a verified field guide for STU dormitory forms!",
+  'How does public transport work?': "DPB basics: 🎫 Monthly student pass = €13.20 (vs €24) — buy at DPB office with student ID + passport. 📱 Always validate when boarding (fines = €50). Key lines: Bus 32 (dorm area), Tram 4 (city center), Bus 39 (Old Town). Check Transport tab for routes!"
+};
+const fallback = [
+  "The International Office (Building A, Mon–Fri 9–12) is your best resource for official questions in Bratislava.",
+  "Check the ESN Bratislava group — they have firsthand advice from current Erasmus students. See the Events tab for meetups!",
+  "Always carry your ISIC card — many places in Bratislava offer 10–50% student discounts you might not know about.",
+  "Tackle paperwork within your first 48 hours — the dormitory office is busiest in week 1, so go early!"
+];
+let msgCount = 0;
+
+function addMessage(cid, text, isUser) {
+  const c = document.getElementById('ai-messages-' + cid);
+  if (!c) return;
+  const d = document.createElement('div');
+  d.className = 'ai-msg' + (isUser ? ' user' : '');
+  d.innerHTML = `<div class="msg-avatar" style="${isUser ? 'background:rgba(232,82,26,0.2)' : ''}">${isUser ? 'AL' : '✦'}</div><div class="msg-bubble">${text}</div>`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+function sendAIMsg(el, cid) {
+  const text = el.textContent;
+  addMessage(cid, text, true);
+  setTimeout(() => addMessage(cid, aiResponses[text] || fallback[msgCount++ % fallback.length], false), 700);
+}
+function sendAIInput(cid) {
+  const inp = document.getElementById('ai-input-' + cid);
+  const text = inp.value.trim();
+  if (!text) return;
+  if (cid === 'food') {
+    const r = document.getElementById('ai-food-response');
+    r.className = 'food-ai-resp show';
+    r.innerHTML = '✦ ' + (aiResponses[text] || `Based on "${text}": 🥙 Bufet STU (150m, €3.50/meal), 🍕 Balkán Pizza (400m, €3–6), 🍜 Pho Saigon (800m, €4–7). All Erasmus-rated — no generic Google Maps results!`);
+    inp.value = '';
+    return;
+  }
+  addMessage(cid, text, true);
+  inp.value = '';
+  setTimeout(() => addMessage(cid, aiResponses[text] || fallback[msgCount++ % fallback.length], false), 700);
+}
+function simulateUpload() { document.getElementById('translation-demo').classList.add('show'); }
+function showRoute() { document.getElementById('route-result').classList.add('show'); }
+function toggleJoin(btn) {
+  if (btn.classList.contains('joined')) { btn.classList.remove('joined'); btn.textContent = '+ Join'; }
+  else { btn.classList.add('joined'); btn.textContent = '✓ Going'; }
+}
+document.querySelectorAll('.filter-row').forEach(row => {
+  row.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+    row.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }));
+});
+</script>
+</body>
+</html>
