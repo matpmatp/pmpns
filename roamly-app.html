@@ -776,31 +776,138 @@ body {
 .panel-backdrop.open { opacity: 1; pointer-events: all; }
 
 /* ─── MOBILE ─── */
+/* ─── MOBILE SEARCH EXPAND ─── */
+.mob-search-bar {
+  display: none;
+  position: absolute; top: 100%; left: 0; right: 0;
+  padding: 0.6rem 1rem;
+  background: rgba(245,240,232,0.97); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  z-index: 6;
+}
+.mob-search-bar input {
+  width: 100%; background: var(--card); border: 1px solid var(--border);
+  border-radius: 2rem; padding: 0.6rem 1.1rem;
+  color: var(--ink); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.9rem; font-weight: 500; outline: none;
+}
+.mob-search-bar.open { display: block; }
+
+/* ─── MORE DRAWER ─── */
+.more-drawer-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(15,14,12,0.4); backdrop-filter: blur(3px);
+  z-index: 150;
+}
+.more-drawer-backdrop.open { display: block; }
+.more-drawer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--ink); color: var(--cream);
+  border-radius: 24px 24px 0 0;
+  padding: 0.5rem 1.2rem 1.5rem;
+  z-index: 151;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+}
+.more-drawer.open { transform: translateY(0); }
+.drawer-handle {
+  width: 40px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.2); margin: 0.6rem auto 1.2rem;
+}
+.drawer-title {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  margin-bottom: 0.8rem;
+}
+.drawer-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;
+}
+.drawer-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  padding: 0.9rem 0.4rem; border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  cursor: pointer; transition: background 0.15s;
+}
+.drawer-item:hover, .drawer-item.active { background: rgba(232,82,26,0.2); }
+.drawer-item-icon { font-size: 1.4rem; line-height: 1; }
+.drawer-item-label {
+  font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.7);
+  text-align: center; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.drawer-item.active .drawer-item-label { color: var(--cream); }
+
+/* ─── QUICK ACTIONS ROW in drawer ─── */
+.drawer-actions {
+  display: flex; gap: 0.7rem; margin-top: 1.2rem; padding-top: 1.2rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.drawer-action-btn {
+  flex: 1; padding: 0.7rem; border-radius: 14px;
+  background: rgba(255,255,255,0.07); border: none;
+  color: rgba(255,255,255,0.7); font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  transition: background 0.15s;
+}
+.drawer-action-btn:hover { background: rgba(255,255,255,0.12); color: var(--cream); }
+
 .mobile-nav { display: none; }
 
 @media (max-width: 900px) {
   body { flex-direction: column; overflow: hidden; height: 100vh; }
   .sidebar { display: none; }
+
+  /* ─── Clean topbar on mobile ─── */
+  .topbar {
+    padding: 0.9rem 1rem;
+    position: relative;
+  }
+  .topbar-title {
+    font-size: 1.05rem; font-weight: 900;
+    flex: 1;
+  }
+  .topbar-right { gap: 0.5rem; }
+  .topbar-search { display: none; } /* hidden — use mob search button instead */
+  .back-btn { display: none; } /* hidden on mobile — use bottom nav */
+  .mob-search-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .mob-search-btn:hover { border-color: var(--border2); }
+
+  .main { overflow-y: auto; overflow-x: hidden; padding-bottom: 74px; }
+
+  /* ─── 5-tab bottom nav ─── */
   .mobile-nav {
     display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-    background: var(--ink); padding: 0.5rem 1rem;
-    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-    gap: 0.2rem; border-top: 1px solid rgba(255,255,255,0.07);
-    justify-content: space-around;
+    background: var(--ink);
+    padding: 0.4rem 0.5rem;
+    padding-bottom: max(0.4rem, env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255,255,255,0.07);
+    justify-content: space-around; gap: 0.2rem;
   }
   .mob-nav-item {
     display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
-    padding: 0.5rem 0.6rem; cursor: pointer; border-radius: 12px;
-    color: rgba(255,255,255,0.42); transition: color 0.15s, background 0.15s;
-    min-width: 44px; flex: 1;
+    padding: 0.5rem 0.5rem 0.3rem; cursor: pointer; border-radius: 14px;
+    color: rgba(255,255,255,0.38); transition: color 0.15s, background 0.15s;
+    flex: 1; min-width: 0;
   }
-  .mob-nav-item.active { color: var(--cream); background: rgba(232,82,26,0.2); }
-  .mob-nav-icon { font-size: 1.25rem; line-height: 1; }
-  .mob-nav-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
-  .main { overflow-y: auto; overflow-x: hidden; padding-bottom: 80px; }
-  .topbar { flex-wrap: nowrap; gap: 0.5rem; padding: 0.8rem 1rem; }
-  .topbar-search { width: 120px; font-size: 0.8rem; }
-  .topbar-right { gap: 0.4rem; }
+  .mob-nav-item.active {
+    color: var(--cream);
+    background: rgba(232,82,26,0.18);
+  }
+  .mob-nav-icon { font-size: 1.3rem; line-height: 1; }
+  .mob-nav-label {
+    font-size: 0.55rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 52px;
+  }
+  .mob-nav-item.mob-more .mob-nav-icon { font-size: 1rem; }
+
   .content { padding: 1rem; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .page-header h1 { font-size: 1.7rem; }
@@ -1050,16 +1157,21 @@ body {
 </aside>
 
 <main class="main">
-  <div class="topbar">
+  <div class="topbar" id="topbar">
     <div class="topbar-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
       <div class="back-btn" onclick="navigate('dashboard',document.querySelector('.nav-item'))">⊞ Dashboard</div>
       <input class="topbar-search" id="topbar-search" placeholder="🔍 Search anything..." oninput="doSearch(this.value)" />
+      <div class="mob-search-btn" onclick="toggleMobSearch()" id="mob-search-btn" title="Search">🔍</div>
       <div class="topbar-btn" id="notif-btn" onclick="openNotif()" title="Notifications">
         🔔
         <div class="notif-dot" id="notif-dot"></div>
       </div>
       <div class="topbar-btn" onclick="openSettings()" title="Settings">⚙</div>
+    </div>
+    <!-- mobile expandable search -->
+    <div class="mob-search-bar" id="mob-search-bar">
+      <input id="mob-search-input" placeholder="🔍 Search anything..." oninput="doSearch(this.value)" onblur="closeMobSearch()" />
     </div>
   </div>
 
@@ -1515,35 +1627,56 @@ body {
   </div>
 </main>
 
-<!-- ═══ MOBILE BOTTOM NAV ═══ -->
+<!-- ═══ MORE DRAWER (mobile) ═══ -->
+<div class="more-drawer-backdrop" id="more-backdrop" onclick="closeMoreDrawer()"></div>
+<div class="more-drawer" id="more-drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-title">All sections</div>
+  <div class="drawer-grid">
+    <div class="drawer-item" id="drawer-paperwork" onclick="navigateFromDrawer('paperwork')">
+      <div class="drawer-item-icon">📄</div>
+      <div class="drawer-item-label" data-i18n="paperwork">Paperwork</div>
+    </div>
+    <div class="drawer-item" id="drawer-transport" onclick="navigateFromDrawer('transport')">
+      <div class="drawer-item-icon">🚌</div>
+      <div class="drawer-item-label" data-i18n="transport">Transport</div>
+    </div>
+    <div class="drawer-item" id="drawer-calendar" onclick="navigateFromDrawer('calendar')">
+      <div class="drawer-item-icon">📅</div>
+      <div class="drawer-item-label" data-i18n="calendar">Calendar</div>
+    </div>
+    <div class="drawer-item" id="drawer-assistant" onclick="navigateFromDrawer('assistant')">
+      <div class="drawer-item-icon">✦</div>
+      <div class="drawer-item-label" data-i18n="assistant">AI</div>
+    </div>
+  </div>
+  <div class="drawer-actions">
+    <button class="drawer-action-btn" onclick="openNotif();closeMoreDrawer()">🔔 Notifications</button>
+    <button class="drawer-action-btn" onclick="openSettings();closeMoreDrawer()">⚙ Settings</button>
+  </div>
+</div>
+
+<!-- ═══ MOBILE BOTTOM NAV (5 tabs) ═══ -->
 <nav class="mobile-nav">
-  <div class="mob-nav-item active" onclick="navigate('dashboard',this);setMobActive(this)">
+  <div class="mob-nav-item active" id="mob-dashboard" onclick="navigate('dashboard',this);setMobActive(this)">
     <div class="mob-nav-icon">⊞</div>
-    <div class="mob-nav-label" data-i18n="dashboard">Home</div>
+    <div class="mob-nav-label">Home</div>
   </div>
-  <div class="mob-nav-item" onclick="navigate('assistant',this);setMobActive(this)">
-    <div class="mob-nav-icon">✦</div>
-    <div class="mob-nav-label" data-i18n="assistant">AI</div>
-  </div>
-  <div class="mob-nav-item" onclick="navigate('paperwork',this);setMobActive(this)">
-    <div class="mob-nav-icon">📄</div>
-    <div class="mob-nav-label" data-i18n="paperwork">Docs</div>
-  </div>
-  <div class="mob-nav-item" onclick="navigate('food',this);setMobActive(this)">
+  <div class="mob-nav-item" id="mob-food" onclick="navigate('food',this);setMobActive(this)">
     <div class="mob-nav-icon">🍽️</div>
-    <div class="mob-nav-label" data-i18n="food">Food</div>
+    <div class="mob-nav-label">Food</div>
   </div>
-  <div class="mob-nav-item" onclick="navigate('events',this);setMobActive(this)">
+  <div class="mob-nav-item" id="mob-events" onclick="navigate('events',this);setMobActive(this)">
     <div class="mob-nav-icon">🎉</div>
-    <div class="mob-nav-label" data-i18n="events">Events</div>
+    <div class="mob-nav-label">Events</div>
   </div>
-  <div class="mob-nav-item" onclick="navigate('transport',this);setMobActive(this)">
-    <div class="mob-nav-icon">🚌</div>
-    <div class="mob-nav-label" data-i18n="transport">Transit</div>
-  </div>
-  <div class="mob-nav-item" onclick="navigate('calendar',this);setMobActive(this)">
+  <div class="mob-nav-item" id="mob-calendar" onclick="navigate('calendar',this);setMobActive(this)">
     <div class="mob-nav-icon">📅</div>
-    <div class="mob-nav-label" data-i18n="calendar">Calendar</div>
+    <div class="mob-nav-label">Calendar</div>
+  </div>
+  <div class="mob-nav-item mob-more" id="mob-more" onclick="openMoreDrawer()">
+    <div class="mob-nav-icon">···</div>
+    <div class="mob-nav-label">More</div>
   </div>
 </nav>
 
@@ -1708,11 +1841,61 @@ function navigate(id, el) {
   document.getElementById('topbar-search').value = '';
   restoreAllVisible();
   if (id === 'calendar') renderCalendar();
+  syncMobNav(id);
 }
 
 function setMobActive(el) {
   document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
+  if (el && el.classList.contains('mob-nav-item')) el.classList.add('active');
+}
+
+// Also sync mob nav when navigating from drawer or sidebar
+function syncMobNav(id) {
+  const map = { dashboard:'mob-dashboard', food:'mob-food', events:'mob-events', calendar:'mob-calendar' };
+  document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById(map[id]);
+  if (el) el.classList.add('active');
+  else document.getElementById('mob-more').classList.add('active');
+}
+
+/* ─── MORE DRAWER ─── */
+function openMoreDrawer() {
+  document.getElementById('more-drawer').classList.add('open');
+  document.getElementById('more-backdrop').classList.add('open');
+}
+function closeMoreDrawer() {
+  document.getElementById('more-drawer').classList.remove('open');
+  document.getElementById('more-backdrop').classList.remove('open');
+}
+function navigateFromDrawer(id) {
+  closeMoreDrawer();
+  // Update drawer item active states
+  document.querySelectorAll('.drawer-item').forEach(d => d.classList.remove('active'));
+  const drawerEl = document.getElementById('drawer-' + id);
+  if (drawerEl) drawerEl.classList.add('active');
+  // Navigate
+  navigate(id, document.querySelector('.nav-item[onclick*="' + id + '"]'));
+  syncMobNav(id);
+}
+
+/* ─── MOBILE SEARCH ─── */
+function toggleMobSearch() {
+  const bar = document.getElementById('mob-search-bar');
+  bar.classList.toggle('open');
+  if (bar.classList.contains('open')) {
+    setTimeout(() => document.getElementById('mob-search-input').focus(), 50);
+  } else {
+    doSearch('');
+  }
+}
+function closeMobSearch() {
+  setTimeout(() => {
+    const bar = document.getElementById('mob-search-bar');
+    if (!document.getElementById('mob-search-input').value) {
+      bar.classList.remove('open');
+      doSearch('');
+    }
+  }, 200);
 }
 
 /* ═══════════════════════════════════════════
