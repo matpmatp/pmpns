@@ -928,6 +928,7 @@ body {
           <div class="lang-pill active" onclick="setLang('en',this)">EN</div>
           <div class="lang-pill" onclick="setLang('pl',this)">PL</div>
           <div class="lang-pill" onclick="setLang('sk',this)">SK</div>
+          <div class="lang-pill" onclick="setLang('mix',this)" style="background:linear-gradient(90deg,rgba(232,82,26,0.15),rgba(45,107,228,0.15),rgba(34,193,147,0.15));border-color:rgba(155,114,240,0.4);color:var(--accent5)" title="Random mix of all languages 🤪">MIX 🎲</div>
         </div>
       </div>
     </div>
@@ -1052,7 +1053,7 @@ body {
   <div class="topbar">
     <div class="topbar-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
-      <a href="index.html" class="back-btn">← Home</a>
+      <div class="back-btn" onclick="navigate('dashboard',document.querySelector('.nav-item'))">⊞ Dashboard</div>
       <input class="topbar-search" id="topbar-search" placeholder="🔍 Search anything..." oninput="doSearch(this.value)" />
       <div class="topbar-btn" id="notif-btn" onclick="openNotif()" title="Notifications">
         🔔
@@ -1604,6 +1605,17 @@ let currentLang = 'en';
 
 function applyLang(lang) {
   currentLang = lang;
+  if (lang === 'mix') {
+    // Each key gets a random language from en/pl/sk
+    const langs = ['en','pl','sk'];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const randomLang = langs[Math.floor(Math.random() * langs.length)];
+      const dict = i18n[randomLang] || i18n.en;
+      if (dict[key]) el.textContent = dict[key];
+    });
+    return;
+  }
   const dict = i18n[lang] || i18n.en;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -1784,7 +1796,8 @@ function setLang(lang, pill) {
   // Update page title
   const dict = i18n[lang] || i18n.en;
   const current = document.querySelector('.nav-item.active .nav-label');
-  if (current) document.getElementById('page-title').textContent = current.textContent;
+  if (current && lang !== 'mix') document.getElementById('page-title').textContent = current.textContent;
+  if (lang === 'mix') showToast('🎲 Chaos mode activated! Enjoy your multilingual experience 🤪');
 }
 function saveSettings() {
   const city = document.getElementById('settings-city').value;
@@ -1974,6 +1987,7 @@ setupFilters('events-filters', 'events-grid', 'events-empty');
 const joinedEventKeys = new Set();
 // Pre-mark the one that starts as "joined" (Slovak Culture Night, Mar 13)
 joinedEventKeys.add('13-2-2026-Slovak Culture Night');
+// Also mark the calEvent title clean for lookup
 
 const calEvents = [
   { day:12, month:2, year:2026, title:'🔴 Dorm Registration Deadline', sub:'Office 104 · by 17:00', type:'deadline', time:'17:00' },
@@ -2021,7 +2035,7 @@ function renderCalendar() {
   // Get days that have joined events
   const joinedDays = new Set(
     calEvents
-      .filter(e => e.month === month && e.year === year && joinedEventKeys.has(e.day+'-'+e.month+'-'+e.year+'-'+e.title.replace(/^[🎉🚶🎨🏰🌍🎲🎵🏞️🌿🎭🔴🎓 ]/g,'')))
+      .filter(e => e.month === month && e.year === year && joinedEventKeys.has(e.day+'-'+e.month+'-'+e.year+'-'+e.title.replace(/^[^\p{L}\p{N}]+/u,'')))
       .map(e => e.day)
   );
 
@@ -2121,7 +2135,7 @@ function renderCalEventList() {
     return;
   }
   list.innerHTML = evs.map(ev => {
-    const cleanTitle = ev.title.replace(/^[🎉🚶🎨🏰🌍🎲🎵🏞️🌿🎭🔴🎓 ]/g,'');
+    const cleanTitle = ev.title.replace(/^[^\p{L}\p{N}]+/u,'');
     const key = ev.day+'-'+ev.month+'-'+ev.year+'-'+cleanTitle;
     const isJoined = joinedEventKeys.has(key);
     return `
